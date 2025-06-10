@@ -15,20 +15,8 @@ class PreprocessedDatasetsNamesWorkMotiveAffordStudy(Enum):
     WORK_MOTIVE_AFFORD_STUDY_E_NOTLIVINGWITHPARENTS = 'preprocessed_excels/E8_work_motive_afford_study_5__e_notlivingwithparents__all_contries.xlsx'
     WORK_MOTIVE_AFFORD_STUDY_S_PARENTS_FINANCIAL_STATUS = 'preprocessed_excels/E8_work_motive_afford_study_5__s_parents_financial_status__all_contries.xlsx'
 
-# Configuración de colores para storytelling
-STORYTELLING_COLORS = {
-    'spain': '#d62728',           # Rojo para España (destacado)
-    'europe': '#1f77b4',          # Azul para promedio europeo
-    'need_work': '#d62728',       # Rojo para necesidad de trabajar
-    'dont_need_work': '#2ca02c',  # Verde para no necesidad
-    'applies_totally': '#8B0000',  # Rojo oscuro
-    'applies_rather': '#FF4500',   # Naranja rojizo
-    'applies_partially': '#FFA500', # Naranja
-    'applies_rather_not': '#DDA0DD', # Lila
-    'does_not_apply': '#228B22',   # Verde oscuro
-    'background': '#f8f9fa',       # Gris claro para fondos
-    'text': '#2c3e50'             # Azul oscuro para texto
-}
+# Importar configuración unificada de colores
+from color_config import STORYTELLING_COLORS, COLOR_PALETTES, apply_standard_layout
 
 def read_preprocessed_dataset(dataset_enum):
     """
@@ -170,30 +158,33 @@ def create_interactive_context_overview(df_general):
     # Línea de promedio europeo
     avg_europe = df_work[df_work['Country'] != 'ES']['Need_Work_Total'].mean()
     fig.add_vline(x=avg_europe, line_dash="dash", line_color="gray", 
-                  annotation_text=f"Promedio Europeo: {avg_europe:.1f}%")
+                  annotation_text=f"Promedio Europeo: {avg_europe:.1f}%",
+                  annotation_position="bottom right")
+    
+    # Aplicar layout estándar
+    fig = apply_standard_layout(
+        fig,
+        title='<b>¿Cuánto necesitan trabajar los estudiantes para costear sus estudios?</b><br>' +
+              '<i>Porcentaje de estudiantes por país que necesitan trabajar</i>',
+        height=800,
+        width=1000
+    )
     
     fig.update_layout(
-        title={
-            'text': '<b>¿Cuánto necesitan trabajar los estudiantes para costear sus estudios?</b><br>' +
-                   '<i>Porcentaje de estudiantes por país que necesitan trabajar</i>',
-            'x': 0.5,
-            'xanchor': 'center',
-            'font': {'size': 18, 'color': STORYTELLING_COLORS['text']}
-        },
         xaxis_title='Porcentaje de estudiantes (%)',
         yaxis_title='País',
-        plot_bgcolor='white',
-        paper_bgcolor='white',
-        height=800,
-        width=1000,
-        font=dict(family="Arial", size=12, color=STORYTELLING_COLORS['text']),
         showlegend=False,
         margin=dict(l=80, r=50, t=100, b=50)
     )
     
-    # Grid sutil
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor=STORYTELLING_COLORS['grid'], 
+                     linecolor=STORYTELLING_COLORS['border'],
+                     title_font={'color': STORYTELLING_COLORS['text'], 'size': 14},
+                     tickfont={'color': STORYTELLING_COLORS['text'], 'size': 11})
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=STORYTELLING_COLORS['grid'],
+                     linecolor=STORYTELLING_COLORS['border'],
+                     title_font={'color': STORYTELLING_COLORS['text'], 'size': 14},
+                     tickfont={'color': STORYTELLING_COLORS['text'], 'size': 11})
     
     return fig
 
@@ -267,8 +258,14 @@ def create_interactive_spain_vs_europe_detailed(df_general):
         )
     )
     
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor=STORYTELLING_COLORS['grid'], 
+                     linecolor=STORYTELLING_COLORS['border'],
+                     title_font={'color': STORYTELLING_COLORS['text'], 'size': 14},
+                     tickfont={'color': STORYTELLING_COLORS['text'], 'size': 11})
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=STORYTELLING_COLORS['grid'],
+                     linecolor=STORYTELLING_COLORS['border'],
+                     title_font={'color': STORYTELLING_COLORS['text'], 'size': 14},
+                     tickfont={'color': STORYTELLING_COLORS['text'], 'size': 11})
     
     return fig
 
@@ -325,8 +322,14 @@ def create_interactive_context_by_demographics(dataset_enum, title_context, demo
         showlegend=False
     )
     
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor=STORYTELLING_COLORS['grid'], 
+                     linecolor=STORYTELLING_COLORS['border'],
+                     title_font={'color': STORYTELLING_COLORS['text'], 'size': 14},
+                     tickfont={'color': STORYTELLING_COLORS['text'], 'size': 11})
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=STORYTELLING_COLORS['grid'],
+                     linecolor=STORYTELLING_COLORS['border'],
+                     title_font={'color': STORYTELLING_COLORS['text'], 'size': 14},
+                     tickfont={'color': STORYTELLING_COLORS['text'], 'size': 11})
     
     return fig
 

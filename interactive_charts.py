@@ -5,6 +5,9 @@ from plotly.subplots import make_subplots
 import numpy as np
 from storytelliing_charts import read_work_motive_afford_study_dataset
 
+# Importar configuración unificada de colores
+from color_config import STORYTELLING_COLORS, COLOR_PALETTES, apply_standard_layout
+
 # Configuración de colores consistentes
 COLORS = {
     'need_work': '#d62728',
@@ -123,13 +126,13 @@ def create_interactive_need_vs_no_need_chart(df):
     fig.update_xaxes(
         showgrid=True,
         gridwidth=1,
-        gridcolor='lightgray',
+        gridcolor=STORYTELLING_COLORS['grid'],
         tickangle=45
     )
     fig.update_yaxes(
         showgrid=True,
         gridwidth=1,
-        gridcolor='lightgray',
+        gridcolor=STORYTELLING_COLORS['grid'],
         range=[0, 100]
     )
     
@@ -233,12 +236,12 @@ def create_interactive_spain_vs_europe_chart(df):
     fig.update_xaxes(
         showgrid=True,
         gridwidth=1,
-        gridcolor='lightgray'
+        gridcolor=STORYTELLING_COLORS['grid']
     )
     fig.update_yaxes(
         showgrid=True,
         gridwidth=1,
-        gridcolor='lightgray',
+        gridcolor=STORYTELLING_COLORS['grid'],
         range=[0, max(max(spain_values), max(europe_values)) + 10]
     )
     

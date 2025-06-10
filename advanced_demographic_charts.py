@@ -12,19 +12,186 @@ class PreprocessedDatasetsNamesWorkMotiveAffordStudy(Enum):
     WORK_MOTIVE_AFFORD_STUDY_E_AGE = 'preprocessed_excels/E8_work_motive_afford_study_5__e_age__all_contries.xlsx'
     WORK_MOTIVE_AFFORD_STUDY_E_FIELD_OF_STUDY = 'preprocessed_excels/E8_work_motive_afford_study_5__e_field_of_study__all_contries.xlsx'
     WORK_MOTIVE_AFFORD_STUDY_E_FINANCIAL_DIFFICULTIES = 'preprocessed_excels/E8_work_motive_afford_study_5__e_financial_difficulties__all_contries.xlsx'
+    WORK_MOTIVE_AFFORD_STUDY_E_EDUPAR = 'preprocessed_excels/E8_edupar_5__s_works_to_afford_to_study__all_contries.xlsx'
     WORK_MOTIVE_AFFORD_STUDY_E_NOTLIVINGWITHPARENTS = 'preprocessed_excels/E8_work_motive_afford_study_5__e_notlivingwithparents__all_contries.xlsx'
     WORK_MOTIVE_AFFORD_STUDY_S_PARENTS_FINANCIAL_STATUS = 'preprocessed_excels/E8_work_motive_afford_study_5__s_parents_financial_status__all_contries.xlsx'
 
-# Colores para storytelling
+# Importar configuración unificada de colores
+from color_config import STORYTELLING_COLORS, COLOR_PALETTES, apply_standard_layout
+
+def translate_age_category(category):
+    """
+    Traduce las categorías de edad del inglés al español
+    """
+    # Convertir a minúsculas para hacer comparaciones case-insensitive
+    category_lower = category.lower().strip()
+    
+    # Casos específicos exactos basados en los datos reales
+    if '< 22' in category_lower:
+        return 'Menos de 22 años'
+    elif '22 - 24' in category_lower or '22-24' in category_lower:
+        return 'Entre 22 y 24 años'
+    elif '25 - 29' in category_lower or '25-29' in category_lower:
+        return 'Entre 25 y 29 años'
+    elif '30 years and older' in category_lower or '30 and older' in category_lower:
+        return '30 años o más'
+    elif any(pattern in category_lower for pattern in ['30+', '>= 30', '30 and more', '30 or more', '30 and over']):
+        return '30 años o más'
+    elif any(pattern in category_lower for pattern in ['22+', '22 and more', '22 or more', '22 and over']):
+        return '22 años o más'
+    elif 'under 22' in category_lower or 'less than 22' in category_lower:
+        return 'Menos de 22 años'
+    else:
+        # Si no coincide con ningún patrón específico, devolver traducción básica
+        # Evitar múltiples reemplazos que causan errores
+        if any(word in category_lower for word in ['year', 'años', 'age', 'edad']):
+            # Ya contiene palabras relacionadas con edad, solo limpiar
+            clean_category = category.replace('years old', 'años').replace('year old', 'año').replace('years', 'años').replace('year', 'año')
+            return clean_category.strip()
+        else:
+            return category  # Devolver original si no se puede traducir
+
+def translate_field_of_study_category(category):
+    """
+    Traduce las categorías de campos de estudio del inglés al español
+    """
+    # Convertir a minúsculas para hacer comparaciones case-insensitive
+    category_lower = category.lower().strip()
+    
+    # Mapeo de campos de estudio más comunes
+    field_translations = {
+        # Artes y Humanidades
+        'arts and humanities': 'Artes y Humanidades',
+        'arts': 'Artes',
+        'humanities': 'Humanidades',
+        'fine arts': 'Bellas Artes',
+        'literature': 'Literatura',
+        'philosophy': 'Filosofía',
+        'history': 'Historia',
+        'languages': 'Idiomas',
+        'foreign languages': 'Idiomas Extranjeros',
+        'modern languages': 'Idiomas Modernos',
+        
+        # Ciencias Sociales
+        'social sciences': 'Ciencias Sociales',
+        'sociology': 'Sociología',
+        'psychology': 'Psicología',
+        'political science': 'Ciencias Políticas',
+        'international relations': 'Relaciones Internacionales',
+        'anthropology': 'Antropología',
+        'geography': 'Geografía',
+        
+        # Negocios y Administración
+        'business and administration': 'Negocios y Administración',
+        'business': 'Negocios',
+        'administration': 'Administración',
+        'management': 'Gestión',
+        'economics': 'Economía',
+        'finance': 'Finanzas',
+        'accounting': 'Contabilidad',
+        'marketing': 'Marketing',
+        
+        # Derecho
+        'law': 'Derecho',
+        'legal studies': 'Estudios Jurídicos',
+        
+        # Ciencias Naturales
+        'natural sciences': 'Ciencias Naturales',
+        'mathematics': 'Matemáticas',
+        'physics': 'Física',
+        'chemistry': 'Química',
+        'biology': 'Biología',
+        'environmental science': 'Ciencias Ambientales',
+        
+        # Ingeniería y Tecnología
+        'engineering': 'Ingeniería',
+        'engineering and technology': 'Ingeniería y Tecnología',
+        'computer science': 'Informática',
+        'information technology': 'Tecnología de la Información',
+        'civil engineering': 'Ingeniería Civil',
+        'mechanical engineering': 'Ingeniería Mecánica',
+        'electrical engineering': 'Ingeniería Eléctrica',
+        'industrial engineering': 'Ingeniería Industrial',
+        
+        # Medicina y Salud
+        'health and medicine': 'Salud y Medicina',
+        'medicine': 'Medicina',
+        'nursing': 'Enfermería',
+        'pharmacy': 'Farmacia',
+        'dentistry': 'Odontología',
+        'veterinary': 'Veterinaria',
+        'public health': 'Salud Pública',
+        
+        # Educación
+        'education': 'Educación',
+        'teacher training': 'Formación del Profesorado',
+        'pedagogy': 'Pedagogía',
+        
+        # Agricultura
+        'agriculture': 'Agricultura',
+        'forestry': 'Silvicultura',
+        'fisheries': 'Pesca',
+        
+        # Servicios
+        'services': 'Servicios',
+        'tourism': 'Turismo',
+        'hospitality': 'Hostelería',
+        'transport': 'Transporte',
+        
+        # Comunicación
+        'communication': 'Comunicación',
+        'journalism': 'Periodismo',
+        'media studies': 'Estudios de Medios',
+    }
+    
+    # Buscar coincidencias exactas primero
+    for english_term, spanish_term in field_translations.items():
+        if english_term == category_lower:
+            return spanish_term
+    
+    # Buscar coincidencias parciales
+    for english_term, spanish_term in field_translations.items():
+        if english_term in category_lower:
+            return spanish_term
+    
+    # Si no se encuentra traducción específica, hacer traducciones básicas
+    translated = category
+    basic_replacements = {
+        ' programmes': '',
+        ' programs': '',
+        'programmes': '',
+        'programs': '',
+        ' and ': ' y ',
+        'sciences': 'Ciencias',
+        'studies': 'Estudios',
+        'technology': 'Tecnología',
+        'engineering': 'Ingeniería',
+        'health': 'Salud',
+        'social': 'Social',
+        'natural': 'Natural',
+        'applied': 'Aplicada',
+        'general': 'General'
+    }
+    
+    for english, spanish in basic_replacements.items():
+        translated = translated.replace(english, spanish)
+    
+    # Capitalizar primera letra de cada palabra
+    translated = ' '.join(word.capitalize() for word in translated.split())
+    
+    return translated
+
+# Mantener compatibilidad con código existente
 COLORS = {
-    'spain': '#d62728',
-    'europe': '#1f77b4', 
-    'female': '#e377c2',
-    'male': '#17becf',
-    'young': '#2ca02c',
-    'older': '#ff7f0e',
-    'high_difficulty': '#d62728',
-    'low_difficulty': '#2ca02c'
+    'spain': STORYTELLING_COLORS['spain'],
+    'europe': STORYTELLING_COLORS['europe'], 
+    'female': STORYTELLING_COLORS['female'],
+    'male': STORYTELLING_COLORS['male'],
+    'young': STORYTELLING_COLORS['young'],
+    'older': STORYTELLING_COLORS['older'],
+    'high_difficulty': STORYTELLING_COLORS['high_difficulty'],
+    'low_difficulty': STORYTELLING_COLORS['low_difficulty'],
+    'grid': STORYTELLING_COLORS['grid']
 }
 
 def read_demographic_dataset_detailed(dataset_enum):
@@ -158,32 +325,46 @@ def create_gender_comparison_chart():
         width=width
     ))
     
+    # Aplicar layout estándar
+    fig = apply_standard_layout(
+        fig, 
+        title='<b>Necesidad de Trabajar por Género</b><br><i>España vs Promedio Europeo</i>',
+        height=600,
+        width=800
+    )
+    
     fig.update_layout(
-        title={
-            'text': '<b>Necesidad de Trabajar por Género</b><br><i>España vs Promedio Europeo</i>',
-            'x': 0.5,
-            'xanchor': 'center',
-            'font': {'size': 18, 'color': '#2c3e50'}
-        },
         xaxis_title='Género',
         yaxis_title='Porcentaje que necesita trabajar (%)',
-        plot_bgcolor='white',
-        paper_bgcolor='white',
-        height=600,
-        width=800,
-        font=dict(family="Arial", size=12, color='#2c3e50'),
         barmode='group',
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=1.02,
+            y=1,
             xanchor="right",
-            x=1
+            x=1,
+            font=dict(color='#000000')  # Leyenda en negro
         )
     )
     
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+    fig.update_xaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
+    fig.update_yaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
+    
+    # Configurar las etiquetas del eje X
+    fig.update_xaxes(
+        tickvals=x,
+        ticktext=categories,  # Usar las categorías ['Mujeres', 'Hombres']
+        tickfont=dict(color='black')  # Etiquetas en negro
+    )
+    fig.update_yaxes(
+        tickfont=dict(color='black')  # Etiquetas del eje Y en negro
+    )
     
     return fig
 
@@ -220,7 +401,9 @@ def create_age_comparison_chart():
                           europe_rows['Applies_Partially_Value'].fillna(0)).mean()
             europe_data.append(europe_need)
             
-            category_names.append(category)
+            # Traducir categorías de edad al español
+            translated_category = translate_age_category(category)
+            category_names.append(translated_category)
     
     if not spain_data:
         return create_basic_demographic_chart("Análisis por Edad", "No se encontraron datos de España por edad")
@@ -257,38 +440,38 @@ def create_age_comparison_chart():
         width=width
     ))
     
+    # Aplicar layout estándar
+    fig = apply_standard_layout(
+        fig, 
+        title='<b>Necesidad de Trabajar por Edad</b><br><i>España vs Promedio Europeo</i>',
+        height=600,
+        width=1000
+    )
+    
     fig.update_layout(
-        title={
-            'text': '<b>Necesidad de Trabajar por Edad</b><br><i>España vs Promedio Europeo</i>',
-            'x': 0.5,
-            'xanchor': 'center',
-            'font': {'size': 18, 'color': '#2c3e50'}
-        },
         xaxis_title='Grupo de Edad',
         yaxis_title='Porcentaje que necesita trabajar (%)',
-        plot_bgcolor='white',
-        paper_bgcolor='white',
-        height=600,
-        width=1000,
-        font=dict(family="Arial", size=12, color='#2c3e50'),
         barmode='group',
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=1.02,
+            y=1,
             xanchor="right",
-            x=1
+            x=1,
+            font=dict(color='black')  # Leyenda en negro
         )
     )
     
     fig.update_xaxes(
         tickvals=x,
-        ticktext=[name.replace(' ', '<br>') for name in category_names],  # Salto de línea para mejor legibilidad
-        showgrid=True, 
-        gridwidth=1, 
-        gridcolor='lightgray'
+        ticktext=[name.replace(' años', '<br>años') for name in category_names],  # Salto de línea solo antes de "años"
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
     )
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+    fig.update_yaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
     
     return fig
 
@@ -303,20 +486,18 @@ def create_basic_demographic_chart(title, message):
         xref="paper", yref="paper",
         x=0.5, y=0.5,
         showarrow=False,
-        font=dict(size=16, color='#7f8c8d')
+        font=dict(size=16, color=STORYTELLING_COLORS['text'])
     )
     
-    fig.update_layout(
-        title={
-            'text': f'<b>{title}</b>',
-            'x': 0.5,
-            'xanchor': 'center',
-            'font': {'size': 18, 'color': '#2c3e50'}
-        },
+    # Aplicar layout estándar
+    fig = apply_standard_layout(
+        fig, 
+        title=f'<b>{title}</b>',
         height=400,
-        width=600,
-        showlegend=False
+        width=600
     )
+    
+    fig.update_layout(showlegend=False)
     
     return fig
 
@@ -353,11 +534,12 @@ def create_field_of_study_comparison_chart():
                           europe_rows['Applies_Partially_Value'].fillna(0)).mean()
             europe_data.append(europe_need)
             
-            # Simplificar nombres largos para mejor visualización
-            simplified_name = category.replace(' programmes', '').replace(' and ', ' & ')
-            if len(simplified_name) > 20:
-                simplified_name = simplified_name[:17] + "..."
-            category_names.append(simplified_name)
+            # Traducir nombres al español para mejor visualización
+            translated_name = translate_field_of_study_category(category)
+            # Si el nombre traducido es muy largo, acortarlo
+            if len(translated_name) > 25:
+                translated_name = translated_name[:22] + "..."
+            category_names.append(translated_name)
     
     if not spain_data:
         return create_basic_demographic_chart("Análisis por Campo de Estudio", "No se encontraron datos de España")
@@ -368,6 +550,9 @@ def create_field_of_study_comparison_chart():
     x = np.arange(len(category_names))
     width = 0.35
     
+    # Preparar textos para hover (nombres traducidos completos)
+    translated_full_names = [translate_field_of_study_category(cat) for cat in field_categories]
+    
     # Barras de España
     fig.add_trace(go.Bar(
         name='España',
@@ -376,7 +561,7 @@ def create_field_of_study_comparison_chart():
         marker_color=COLORS['spain'],
         marker_line=dict(color='white', width=2),
         hovertemplate='<b>España - %{text}</b><br>Necesidad de trabajar: %{y:.1f}%<extra></extra>',
-        text=field_categories,  # Texto completo en hover
+        text=translated_full_names,  # Nombres traducidos completos en hover
         textposition='outside',
         width=width
     ))
@@ -389,30 +574,27 @@ def create_field_of_study_comparison_chart():
         marker_color=COLORS['europe'],
         marker_line=dict(color='white', width=2),
         hovertemplate='<b>Promedio Europeo - %{text}</b><br>Necesidad de trabajar: %{y:.1f}%<extra></extra>',
-        text=field_categories,  # Texto completo en hover
+        text=translated_full_names,  # Nombres traducidos completos en hover
         textposition='outside',
         width=width
     ))
     
+    # Aplicar layout estándar
+    fig = apply_standard_layout(
+        fig, 
+        title='<b>Necesidad de Trabajar por Campo de Estudio</b><br><i>España vs Promedio Europeo</i>',
+        height=700,
+        width=1200
+    )
+    
     fig.update_layout(
-        title={
-            'text': '<b>Necesidad de Trabajar por Campo de Estudio</b><br><i>España vs Promedio Europeo</i>',
-            'x': 0.5,
-            'xanchor': 'center',
-            'font': {'size': 18, 'color': '#2c3e50'}
-        },
         xaxis_title='Campo de Estudio',
         yaxis_title='Porcentaje que necesita trabajar (%)',
-        plot_bgcolor='white',
-        paper_bgcolor='white',
-        height=700,
-        width=1200,
-        font=dict(family="Arial", size=12, color='#2c3e50'),
         barmode='group',
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=1.02,
+            y=1,
             xanchor="right",
             x=1
         )
@@ -422,11 +604,13 @@ def create_field_of_study_comparison_chart():
         tickvals=x,
         ticktext=[name.replace(' ', '<br>') for name in category_names],
         tickangle=45,
-        showgrid=True, 
-        gridwidth=1, 
-        gridcolor='lightgray'
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
     )
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+    fig.update_yaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
     
     return fig
 
@@ -535,9 +719,19 @@ def create_financial_difficulties_comparison_chart():
         ticktext=[name.replace(' ', '<br>') for name in category_names],
         showgrid=True, 
         gridwidth=1, 
-        gridcolor='lightgray'
+        gridcolor=COLORS['grid'],
+        linecolor=STORYTELLING_COLORS['border'],
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
     )
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+    fig.update_yaxes(
+        showgrid=True, 
+        gridwidth=1, 
+        gridcolor=COLORS['grid'],
+        linecolor=STORYTELLING_COLORS['border'],
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
     
     return fig
 
@@ -574,8 +768,18 @@ def create_living_with_parents_comparison_chart():
                           europe_rows['Applies_Partially_Value'].fillna(0)).mean()
             europe_data.append(europe_need)
             
-            # Simplificar nombres para mejor visualización
-            simplified_name = category.replace('Not living with parents', 'Independientes').replace('Living with parents', 'Con Padres')
+            # Traducir nombres para mejor visualización
+            if category == 'Not living with parents':
+                simplified_name = 'Viven Independientes'
+            elif category == 'Living with parents':
+                simplified_name = 'Viven con Padres'
+            elif 'not living' in category.lower():
+                simplified_name = 'Viven Independientes'
+            elif 'living with' in category.lower():
+                simplified_name = 'Viven con Padres'
+            else:
+                # Para cualquier otra categoría, usar nombre completo traducido
+                simplified_name = category.replace('parents', 'padres').replace('living', 'viviendo')
             category_names.append(simplified_name)
     
     if not spain_data:
@@ -613,27 +817,25 @@ def create_living_with_parents_comparison_chart():
         width=width
     ))
     
+    # Aplicar layout estándar
+    fig = apply_standard_layout(
+        fig, 
+        title='<b>Necesidad de Trabajar por Situación de Vivienda</b><br><i>España vs Promedio Europeo</i>',
+        height=600,
+        width=800
+    )
+    
     fig.update_layout(
-        title={
-            'text': '<b>Necesidad de Trabajar por Situación de Vivienda</b><br><i>España vs Promedio Europeo</i>',
-            'x': 0.5,
-            'xanchor': 'center',
-            'font': {'size': 18, 'color': '#2c3e50'}
-        },
         xaxis_title='Situación de Vivienda',
         yaxis_title='Porcentaje que necesita trabajar (%)',
-        plot_bgcolor='white',
-        paper_bgcolor='white',
-        height=600,
-        width=800,
-        font=dict(family="Arial", size=12, color='#2c3e50'),
         barmode='group',
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=1.02,
+            y=1,
             xanchor="right",
-            x=1
+            x=1,
+            font=dict(color='black')  # Leyenda en negro
         )
     )
     
@@ -642,9 +844,19 @@ def create_living_with_parents_comparison_chart():
         ticktext=category_names,
         showgrid=True, 
         gridwidth=1, 
-        gridcolor='lightgray'
+        gridcolor=COLORS['grid'],
+        linecolor=STORYTELLING_COLORS['border'],
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
     )
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+    fig.update_yaxes(
+        showgrid=True, 
+        gridwidth=1, 
+        gridcolor=COLORS['grid'],
+        linecolor=STORYTELLING_COLORS['border'],
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
     
     return fig
 
@@ -681,8 +893,20 @@ def create_parents_financial_status_comparison_chart():
                           europe_rows['Applies_Partially_Value'].fillna(0)).mean()
             europe_data.append(europe_need)
             
-            # Simplificar nombres para mejor visualización
-            simplified_name = category.replace('financial status', '').replace('parents', 'Padres').strip()
+            # Traducir nombres al español para mejor visualización
+            if 'not at all well-off' in category:
+                simplified_name = 'Situación Financiera Baja'
+            elif 'not very well-off' in category:
+                simplified_name = 'Situación Financiera Media-Baja'
+            elif 'average' in category:
+                simplified_name = 'Situación Financiera Media'
+            elif 'somewhat well-off' in category:
+                simplified_name = 'Situación Financiera Media-Alta'
+            elif 'very well-off' in category:
+                simplified_name = 'Situación Financiera Alta'
+            else:
+                # Para cualquier otra categoría no esperada, usar el nombre original
+                simplified_name = category.replace('financial status', 'Situación Financiera').replace('parents', 'Padres').strip()
             category_names.append(simplified_name)
     
     if not spain_data:
@@ -734,27 +958,25 @@ def create_parents_financial_status_comparison_chart():
         width=width
     ))
     
+    # Aplicar layout estándar
+    fig = apply_standard_layout(
+        fig, 
+        title='<b>Necesidad de Trabajar por Estado Financiero de los Padres</b><br><i>España vs Promedio Europeo</i>',
+        height=600,
+        width=1000
+    )
+    
     fig.update_layout(
-        title={
-            'text': '<b>Necesidad de Trabajar por Estado Financiero de los Padres</b><br><i>España vs Promedio Europeo</i>',
-            'x': 0.5,
-            'xanchor': 'center',
-            'font': {'size': 18, 'color': '#2c3e50'}
-        },
         xaxis_title='Estado Financiero de los Padres',
         yaxis_title='Porcentaje que necesita trabajar (%)',
-        plot_bgcolor='white',
-        paper_bgcolor='white',
-        height=600,
-        width=1000,
-        font=dict(family="Arial", size=12, color='#2c3e50'),
         barmode='group',
         legend=dict(
             orientation="h",
             yanchor="bottom",
             y=1.02,
             xanchor="right",
-            x=1
+            x=1,
+            font=dict(color='#000000')  # Leyenda en negro
         )
     )
     
@@ -763,9 +985,163 @@ def create_parents_financial_status_comparison_chart():
         ticktext=[name.replace(' ', '<br>') for name in category_names],
         showgrid=True, 
         gridwidth=1, 
-        gridcolor='lightgray'
+        gridcolor=COLORS['grid'],
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
     )
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+    fig.update_yaxes(
+        showgrid=True, 
+        gridwidth=1, 
+        gridcolor=COLORS['grid'],
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
+    
+    return fig
+
+def create_parents_education_comparison_chart():
+    """
+    Crea un gráfico comparativo específico por nivel educativo de los padres
+    """
+    parents_education_data = read_demographic_dataset_detailed(
+        PreprocessedDatasetsNamesWorkMotiveAffordStudy.WORK_MOTIVE_AFFORD_STUDY_E_EDUPAR
+    )
+    
+    if not parents_education_data:
+        return create_basic_demographic_chart("Análisis por Nivel Educativo de Padres", "No se encontraron datos")
+    
+    # Obtener las categorías disponibles
+    education_categories = list(parents_education_data.keys())
+    
+    spain_data = []
+    europe_data = []
+    category_names = []
+    
+    for category in education_categories:
+        spain_row = parents_education_data[category][parents_education_data[category]['Country'] == 'ES']
+        if not spain_row.empty:
+            spain_need = (spain_row.iloc[0]['Applies_Totally_Value'] + 
+                         spain_row.iloc[0]['Applies_Rather_Value'] + 
+                         spain_row.iloc[0]['Applies_Partially_Value'])
+            spain_data.append(spain_need)
+            
+            # Promedio europeo para esta categoría
+            europe_rows = parents_education_data[category][parents_education_data[category]['Country'] != 'ES']
+            europe_need = (europe_rows['Applies_Totally_Value'].fillna(0) + 
+                          europe_rows['Applies_Rather_Value'].fillna(0) + 
+                          europe_rows['Applies_Partially_Value'].fillna(0)).mean()
+            europe_data.append(europe_need)
+            
+            # Traducir nombres al español para mejor visualización
+            if 'primary' in category.lower() or 'basic' in category.lower():
+                simplified_name = 'Educación Primaria'
+            elif 'secondary' in category.lower() or 'high school' in category.lower():
+                simplified_name = 'Educación Secundaria'
+            elif 'vocational' in category.lower() or 'professional' in category.lower():
+                simplified_name = 'Formación Profesional'
+            elif 'bachelor' in category.lower() or 'university' in category.lower():
+                simplified_name = 'Educación Universitaria'
+            elif 'master' in category.lower() or 'postgraduate' in category.lower():
+                simplified_name = 'Estudios de Máster'
+            elif 'phd' in category.lower() or 'doctorate' in category.lower():
+                simplified_name = 'Estudios de Doctorado'
+            elif 'no education' in category.lower() or 'none' in category.lower():
+                simplified_name = 'Sin Educación Formal'
+            else:
+                # Para cualquier otra categoría no esperada, usar el nombre original simplificado
+                simplified_name = category.replace('education', 'Educación').replace('level', 'Nivel').strip()
+            category_names.append(simplified_name)
+    
+    if not spain_data:
+        return create_basic_demographic_chart("Análisis por Nivel Educativo de Padres", "No se encontraron datos de España")
+    
+    # Crear el gráfico
+    fig = go.Figure()
+    
+    x = np.arange(len(category_names))
+    width = 0.35
+    
+    # Colores según el nivel educativo (correlación inversa con necesidad de trabajar)
+    colors_spain = []
+    colors_europe = []
+    for cat in category_names:
+        if any(word in cat.lower() for word in ['primaria', 'sin educación', 'none', 'basic']):
+            colors_spain.append(COLORS['high_difficulty'])  # Rojo para educación baja
+            colors_europe.append(COLORS['high_difficulty'])
+        elif any(word in cat.lower() for word in ['doctorado', 'máster', 'phd', 'postgraduate']):
+            colors_spain.append(COLORS['low_difficulty'])   # Verde para educación alta
+            colors_europe.append(COLORS['low_difficulty'])
+        elif any(word in cat.lower() for word in ['universitaria', 'bachelor', 'university']):
+            colors_spain.append(STORYTELLING_COLORS['europe']) # Azul para educación universitaria
+            colors_europe.append(STORYTELLING_COLORS['europe'])
+        else:
+            colors_spain.append(COLORS['spain'])  # Color por defecto
+            colors_europe.append(COLORS['europe'])
+    
+    # Barras de España
+    fig.add_trace(go.Bar(
+        name='España',
+        x=[i - width/2 for i in x],
+        y=spain_data,
+        marker_color=colors_spain,
+        marker_line=dict(color='white', width=2),
+        hovertemplate='<b>España - %{text}</b><br>Necesidad de trabajar: %{y:.1f}%<extra></extra>',
+        text=category_names,
+        textposition='outside',
+        width=width
+    ))
+    
+    # Barras de Europa
+    fig.add_trace(go.Bar(
+        name='Promedio Europeo',
+        x=[i + width/2 for i in x],
+        y=europe_data,
+        marker_color=colors_europe,
+        marker_line=dict(color='white', width=2),
+        hovertemplate='<b>Promedio Europeo - %{text}</b><br>Necesidad de trabajar: %{y:.1f}%<extra></extra>',
+        text=category_names,
+        textposition='outside',
+        width=width
+    ))
+    
+    # Aplicar layout estándar
+    fig = apply_standard_layout(
+        fig, 
+        title='<b>Necesidad de Trabajar por Nivel Educativo de los Padres</b><br><i>España vs Promedio Europeo</i>',
+        height=600,
+        width=1000
+    )
+    
+    fig.update_layout(
+        xaxis_title='Nivel Educativo de los Padres',
+        yaxis_title='Porcentaje que necesita trabajar (%)',
+        barmode='group',
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1,
+            font=dict(color='#000000')  # Leyenda en negro
+        )
+    )
+    
+    fig.update_xaxes(
+        tickvals=x,
+        ticktext=[name.replace(' ', '<br>') for name in category_names],
+        showgrid=True, 
+        gridwidth=1, 
+        gridcolor=COLORS['grid'],
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
+    fig.update_yaxes(
+        showgrid=True, 
+        gridwidth=1, 
+        gridcolor=COLORS['grid'],
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
     
     return fig
 
@@ -823,6 +1199,14 @@ def create_comprehensive_demographic_dashboard():
         print(f"⚠️ Error creando gráfico por estado financiero de padres: {e}")
         dashboard_charts['parents_financial_status'] = create_basic_demographic_chart("Análisis por Estado Financiero de Padres", "Error al cargar datos")
     
+    # Gráfico por nivel educativo de los padres
+    try:
+        dashboard_charts['parents_education'] = create_parents_education_comparison_chart()
+        print("✅ Gráfico por nivel educativo de padres creado exitosamente")
+    except Exception as e:
+        print(f"⚠️ Error creando gráfico por nivel educativo de padres: {e}")
+        dashboard_charts['parents_education'] = create_basic_demographic_chart("Análisis por Nivel Educativo de Padres", "Error al cargar datos")
+    
     return dashboard_charts
 
 if __name__ == "__main__":
@@ -838,7 +1222,8 @@ if __name__ == "__main__":
         'field_of_study': 'Campo de Estudio (Carreras/Disciplinas)',
         'financial_difficulties': 'Dificultades Financieras (Nivel socioeconómico)',
         'living_with_parents': 'Situación de Vivienda (Independientes vs Con padres)',
-        'parents_financial_status': 'Estado Financiero de Padres (Nivel económico familiar)'
+        'parents_financial_status': 'Estado Financiero de Padres (Nivel económico familiar)',
+        'parents_education': 'Nivel Educativo de Padres (Formación académica familiar)'
     }
     
     for key in charts.keys():
@@ -852,6 +1237,7 @@ if __name__ == "__main__":
     print("   charts['financial_difficulties'].show()    # Análisis por dificultades financieras")
     print("   charts['living_with_parents'].show()       # Análisis por situación de vivienda")
     print("   charts['parents_financial_status'].show()  # Análisis por estado financiero de padres")
+    print("   charts['parents_education'].show()         # Análisis por nivel educativo de padres")
     
     # Ejemplo de insights demográficos
     print("\n🔍 INSIGHTS DEMOGRÁFICOS DISPONIBLES:")

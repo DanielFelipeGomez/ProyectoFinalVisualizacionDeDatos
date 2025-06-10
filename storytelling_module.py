@@ -16,16 +16,14 @@ class WorkStudyStorytellingCharts:
     def __init__(self):
         """Inicializa la clase cargando los datos"""
         self.df = read_work_motive_afford_study_dataset()
-        self.colors = {
-            'need_work': '#d62728',
-            'dont_need_work': '#2ca02c', 
-            'spain': '#d62728',
-            'europe': '#1f77b4'
-        }
+        # Importar configuración unificada de colores
+        from color_config import STORYTELLING_COLORS
+        self.colors = STORYTELLING_COLORS
         
     def get_chart_need_vs_no_need(self, height=600, width=1200):
         """
         Retorna el gráfico interactivo de "Necesitan Trabajar" vs "No Necesitan Trabajar"
+        para poder costear sus estudios
         
         Args:
             height (int): Altura del gráfico en píxeles
@@ -34,22 +32,28 @@ class WorkStudyStorytellingCharts:
         Returns:
             plotly.graph_objects.Figure: Gráfico interactivo
         """
-        countries = self.df['Country'].tolist()
+        # Filtrar datos excluyendo CH (Suiza)
+        df_filtered = self.df[self.df['Country'] != 'CH'].copy()
+        countries = df_filtered['Country'].tolist()
         
         # Calcular porcentajes agrupados
-        need_to_work = (self.df['Applies_Totally_Value'].fillna(0) + 
-                       self.df['Applies_Rather_Value'].fillna(0) + 
-                       self.df['Applies_Partially_Value'].fillna(0))
+        need_to_work = (df_filtered['Applies_Totally_Value'].fillna(0) + 
+                       df_filtered['Applies_Rather_Value'].fillna(0) + 
+                       df_filtered['Applies_Partially_Value'].fillna(0))
         
-        dont_need_to_work = (self.df['Applies_Rather_Not_Value'].fillna(0) + 
-                            self.df['Does_Not_Apply_Value'].fillna(0))
-        
+        dont_need_to_work = (df_filtered['Applies_Rather_Not_Value'].fillna(0) + 
+                            df_filtered['Does_Not_Apply_Value'].fillna(0))
+
+        # calcular la media que necesitan trabajar
+        mean_need_to_work = need_to_work.mean()
+        print(f"Media de necesitan trabajar: {mean_need_to_work}")  
+
         # Crear el gráfico
         fig = go.Figure()
         
-        # Barra para "Necesitan Trabajar"
+        # Barra para "Necesitan Trabajar" - usando color NEGATIVE (rojo) por ser problemático
         fig.add_trace(go.Bar(
-            name='Necesitan Trabajar',
+            name='Necesitan Trabajar para Pagar Estudios',
             x=countries,
             y=need_to_work,
             marker_color=self.colors['need_work'],
@@ -58,12 +62,12 @@ class WorkStudyStorytellingCharts:
                          '<extra></extra>',
             text=[f'{val:.1f}%' for val in need_to_work],
             textposition='inside',
-            textfont=dict(color='white', size=10)
+            textfont=dict(color='white', size=10, family='Arial')
         ))
         
-        # Barra para "No Necesitan Trabajar"
+        # Barra para "No Necesitan Trabajar" - usando color POSITIVE (verde) por ser favorable
         fig.add_trace(go.Bar(
-            name='No Necesitan Trabajar',
+            name='No Necesitan Trabajar para Pagar Estudios',
             x=countries,
             y=dont_need_to_work,
             base=need_to_work,
@@ -73,7 +77,7 @@ class WorkStudyStorytellingCharts:
                          '<extra></extra>',
             text=[f'{val:.1f}%' for val in dont_need_to_work],
             textposition='inside',
-            textfont=dict(color='white', size=10)
+            textfont=dict(color='white', size=10, family='Arial')
         ))
         
         # Destacar España
@@ -83,7 +87,7 @@ class WorkStudyStorytellingCharts:
                 type="rect",
                 x0=spain_idx-0.4, y0=0,
                 x1=spain_idx+0.4, y1=100,
-                line=dict(color="black", width=3),
+                line=dict(color=self.colors['spain'], width=4),
                 fillcolor="rgba(0,0,0,0)"
             )
             
@@ -96,49 +100,46 @@ class WorkStudyStorytellingCharts:
                 arrowhead=2,
                 arrowsize=1,
                 arrowwidth=2,
-                arrowcolor="black",
-                font=dict(size=12, color="black")
+                arrowcolor=self.colors['spain'],
+                font=dict(size=12, color=self.colors['text'], family='Arial, sans-serif')
             )
         
-        # Personalizar layout
-        fig.update_layout(
-            title={
-                'text': '<b>Necesidad de Trabajar para Costear Estudios por País</b><br>' +
-                       '<sub>Porcentaje de estudiantes que necesitan vs no necesitan trabajar</sub>',
-                'x': 0.5,
-                'xanchor': 'center',
-                'font': {'size': 18}
-            },
-            xaxis_title='<b>Países</b>',
-            yaxis_title='<b>Porcentaje (%)</b>',
-            barmode='stack',
+        # Aplicar layout estándar
+        from color_config import apply_standard_layout
+        fig = apply_standard_layout(
+            fig,
+            title='<b>Necesidad de Trabajar para Costear Estudios por País Europeo</b><br>' +
+                  '<sub>¿Qué porcentaje de estudiantes necesitan vs no necesitan trabajar para pagar sus estudios?</sub>',
             height=height,
-            width=width,
+            width=width
+        )
+        
+        fig.update_layout(
+            xaxis_title='<b>Países Europeos</b>',
+            yaxis_title='<b>Porcentaje de Estudiantes (%)</b>',
+            barmode='stack',
             hovermode='x unified',
             showlegend=True,
             legend=dict(
                 orientation="h",
                 yanchor="bottom",
-                y=1.02,
-                xanchor="right",
-                x=1,
-                font=dict(size=12)
+                y=1.05,
+                xanchor="center",
+                x=0.5,
+                font=dict(size=12, color='#000000', family='Arial, sans-serif')
             ),
-            plot_bgcolor='white',
-            paper_bgcolor='white'
+            margin=dict(t=170, b=60, l=60, r=60)
         )
         
         fig.update_xaxes(
-            showgrid=True,
-            gridwidth=1,
-            gridcolor='lightgray',
-            tickangle=45
+            tickangle=45,
+            title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+            tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
         )
         fig.update_yaxes(
-            showgrid=True,
-            gridwidth=1,
-            gridcolor='lightgray',
-            range=[0, 100]
+            range=[0, 100],
+            title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+            tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
         )
         
         return fig
@@ -146,6 +147,7 @@ class WorkStudyStorytellingCharts:
     def get_chart_spain_vs_europe(self, height=600, width=1000):
         """
         Retorna el gráfico interactivo comparando España vs Promedio Europeo
+        sobre la necesidad de trabajar para poder costear los estudios
         
         Args:
             height (int): Altura del gráfico en píxeles
@@ -160,11 +162,17 @@ class WorkStudyStorytellingCharts:
             print("España no encontrada en los datos")
             return None
         
-        # Promedio europeo (excluyendo España)
-        df_no_spain = self.df[self.df['Country'] != 'ES']
+        # Promedio europeo (excluyendo España y CH)
+        df_no_spain = self.df[(self.df['Country'] != 'ES') & (self.df['Country'] != 'CH')]
         
-        categories = ['Aplica<br>Totalmente', 'Aplica<br>Bastante', 'Aplica<br>Parcialmente', 
-                     'No Aplica<br>Mucho', 'No Aplica<br>Para Nada']
+        # Categorías más claras que explican la necesidad de trabajar para pagar estudios
+        categories = [
+            'Totalmente<br>Necesario', 
+            'Bastante<br>Necesario', 
+            'Parcialmente<br>Necesario', 
+            'Poco<br>Necesario', 
+            'Nada<br>Necesario'
+        ]
         
         spain_values = [
             spain_data['Applies_Totally_Value'], 
@@ -182,6 +190,10 @@ class WorkStudyStorytellingCharts:
             df_no_spain['Does_Not_Apply_Value'].mean()
         ]
         
+        # Usar colores unificados
+        spain_color = self.colors['spain']
+        europe_color = self.colors['europe']
+        
         # Crear el gráfico
         fig = go.Figure()
         
@@ -189,82 +201,97 @@ class WorkStudyStorytellingCharts:
             name='🇪🇸 España',
             x=categories,
             y=spain_values,
-            marker_color=self.colors['spain'],
-            opacity=0.8,
+            marker_color=spain_color,
+            opacity=0.9,
             hovertemplate='<b>España</b><br>' + 
                          '%{x}: %{y:.1f}%<br>' +
                          '<extra></extra>',
             text=[f'{val:.1f}%' for val in spain_values],
             textposition='outside',
-            textfont=dict(size=11)
+            textfont=dict(size=11, color=self.colors['text'], family='Arial, sans-serif')
         ))
         
         fig.add_trace(go.Bar(
             name='🇪🇺 Promedio Europeo',
             x=categories,
             y=europe_values,
-            marker_color=self.colors['europe'],
-            opacity=0.8,
+            marker_color=europe_color,
+            opacity=0.9,
             hovertemplate='<b>Promedio Europeo</b><br>' + 
                          '%{x}: %{y:.1f}%<br>' +
                          '<extra></extra>',
             text=[f'{val:.1f}%' for val in europe_values],
             textposition='outside',
-            textfont=dict(size=11)
+            textfont=dict(size=11, color=self.colors['text'], family='Arial, sans-serif')
         ))
         
-        # Personalizar layout
-        fig.update_layout(
-            title={
-                'text': '<b>España vs Promedio Europeo</b><br>' +
-                       '<sub>Motivos para trabajar y costear estudios</sub>',
-                'x': 0.5,
-                'xanchor': 'center',
-                'font': {'size': 18}
-            },
-            xaxis_title='<b>Nivel de Aplicación del Motivo</b>',
-            yaxis_title='<b>Porcentaje (%)</b>',
-            barmode='group',
+        # Aplicar layout estándar
+        from color_config import apply_standard_layout
+        fig = apply_standard_layout(
+            fig,
+            title='<b>¿Qué tan necesario es trabajar para poder pagar los estudios?</b><br>' +
+                  '<sub>Comparación: España vs Promedio Europeo | Porcentaje de estudiantes por nivel de necesidad</sub>',
             height=height,
-            width=width,
+            width=width
+        )
+        
+        fig.update_layout(
+            xaxis_title='<b>Nivel de Necesidad de Trabajar para Costear Estudios</b>',
+            yaxis_title='<b>Porcentaje de Estudiantes (%)</b>',
+            barmode='group',
             hovermode='x unified',
             showlegend=True,
             legend=dict(
                 orientation="h",
                 yanchor="bottom",
-                y=1.02,
-                xanchor="right",
-                x=1,
-                font=dict(size=12)
+                y=-0.3,
+                xanchor="center",
+                x=0.5,
+                font=dict(size=13, color='#000000', family='Arial, sans-serif')
             ),
-            plot_bgcolor='white',
-            paper_bgcolor='white'
+            margin=dict(t=150, b=100, l=60, r=60)
         )
         
         fig.update_xaxes(
-            showgrid=True,
-            gridwidth=1,
-            gridcolor='lightgray'
-        )
-        fig.update_yaxes(
-            showgrid=True,
-            gridwidth=1,
-            gridcolor='lightgray',
-            range=[0, max(max(spain_values), max(europe_values)) + 10]
+            title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+            tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
         )
         
-        # Añadir resumen
-        spain_need_work = spain_values[0] + spain_values[1] + spain_values[2]
-        europe_need_work = europe_values[0] + europe_values[1] + europe_values[2]
+        fig.update_yaxes(
+            range=[0, max(max(spain_values), max(europe_values)) + 8],
+            title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+            tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+        )
+        
+        # Añadir interpretación más clara en lugar del resumen numérico
+        spain_high_need = spain_values[0] + spain_values[1] + spain_values[2]  # Totalmente + Bastante + Parcialmente
+        europe_high_need = europe_values[0] + europe_values[1] + europe_values[2]
+        
+        difference = spain_high_need - europe_high_need
+        
+        # Determinar el mensaje según la diferencia
+        if difference > 5:
+            comparison_text = f"España supera a Europa en {difference:.1f} puntos porcentuales"
+            comparison_color = self.colors['need_work']  # NEGATIVE color
+        elif difference < -5:
+            comparison_text = f"España está {abs(difference):.1f} puntos por debajo de Europa"
+            comparison_color = self.colors['dont_need_work']  # POSITIVE color
+        else:
+            comparison_text = f"España y Europa están muy similares (diferencia: {difference:+.1f}pp)"
+            comparison_color = self.colors['text_light']  # Neutral color
         
         fig.add_annotation(
-            x=2, y=max(max(spain_values), max(europe_values)) + 5,
-            text=f"<b>Resumen:</b><br>España: {spain_need_work:.1f}% necesitan trabajar<br>Europa: {europe_need_work:.1f}% necesitan trabajar",
+            x=2, y=max(max(spain_values), max(europe_values)) + 3,
+            text=f"<b>Interpretación:</b><br>" +
+                 f"• España: <b>{spain_high_need:.1f}%</b> necesitan trabajar para pagar estudios<br>" +
+                 f"• Europa: <b>{europe_high_need:.1f}%</b> necesitan trabajar para pagar estudios<br>" +
+                 f"• <span style='color: {comparison_color}'><b>{comparison_text}</b></span>",
             showarrow=False,
-            bgcolor="rgba(255,255,255,0.8)",
-            bordercolor="gray",
-            borderwidth=1,
-            font=dict(size=10)
+            bgcolor="rgba(248,249,250,0.95)",
+            bordercolor=self.colors['border'],
+            borderwidth=1.5,
+            font=dict(size=11, color=self.colors['text'], family='Arial, sans-serif'),
+            align="left"
         )
         
         return fig
@@ -285,13 +312,14 @@ class WorkStudyStorytellingCharts:
                           spain_data['Applies_Rather_Value'] + 
                           spain_data['Applies_Partially_Value'])
         
-        df_no_spain = self.df[self.df['Country'] != 'ES']
+        # Excluir España y CH del cálculo del promedio europeo
+        df_no_spain = self.df[(self.df['Country'] != 'ES') & (self.df['Country'] != 'CH')]
         europe_need_work = (df_no_spain['Applies_Totally_Value'].fillna(0) + 
                            df_no_spain['Applies_Rather_Value'].fillna(0) + 
                            df_no_spain['Applies_Partially_Value'].fillna(0)).mean()
         
-        # Encontrar extremos
-        df_stats = self.df.copy()
+        # Encontrar extremos (excluyendo CH)
+        df_stats = self.df[self.df['Country'] != 'CH'].copy()
         df_stats['Need_Work_Total'] = (df_stats['Applies_Totally_Value'].fillna(0) + 
                                       df_stats['Applies_Rather_Value'].fillna(0) + 
                                       df_stats['Applies_Partially_Value'].fillna(0))

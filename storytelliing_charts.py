@@ -8,6 +8,9 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.io as pio
 
+# Importar configuración unificada de colores
+from color_config import STORYTELLING_COLORS, COLOR_PALETTES, apply_standard_layout
+
 # Configuración de estilo para gráficos más atractivos
 plt.style.use('default')
 sns.set_palette("husl")
@@ -738,14 +741,16 @@ def create_stacked_relationship_chart(df, spain_color, other_countries_color):
         yaxis_title='Porcentaje (%)',
         barmode='stack',
         hovermode='closest',
-        template='plotly_white',
-        font={'size': 12},
+        plot_bgcolor=STORYTELLING_COLORS['background'],
+        paper_bgcolor=STORYTELLING_COLORS['background'],
+        font={'size': 12, 'color': STORYTELLING_COLORS['text'], 'family': 'Arial, sans-serif'},
         legend={
             'orientation': 'h',
             'yanchor': 'bottom',
             'y': -0.3,
             'xanchor': 'center',
-            'x': 0.5
+            'x': 0.5,
+            'font': {'color': STORYTELLING_COLORS['text'], 'size': 12}
         },
         height=600
     )
@@ -819,16 +824,18 @@ def create_simplified_relationship_chart(df, spain_color, other_countries_color)
         title={
             'text': 'Trabajo Relacionado vs No Relacionado con Estudios<br><sub>Comparación simplificada por países</sub>',
             'x': 0.5,
-            'font': {'size': 20}
+            'font': {'size': 20, 'color': STORYTELLING_COLORS['text']}
         },
         xaxis_title='Países',
         yaxis_title='Porcentaje (%)',
         barmode='stack',
-        template='plotly_white',
+        plot_bgcolor=STORYTELLING_COLORS['background'],
+        paper_bgcolor=STORYTELLING_COLORS['background'],
+        font={'size': 12, 'color': STORYTELLING_COLORS['text'], 'family': 'Arial, sans-serif'},
         hovermode='closest',
-        font={'size': 12},
         height=500,
-        xaxis={'tickangle': 45}
+        xaxis={'tickangle': 45, 'title_font': {'color': STORYTELLING_COLORS['text']}, 'tickfont': {'color': STORYTELLING_COLORS['text']}},
+        yaxis={'title_font': {'color': STORYTELLING_COLORS['text']}, 'tickfont': {'color': STORYTELLING_COLORS['text']}}
     )
     
     # Destacar España
@@ -887,13 +894,16 @@ def create_relationship_ranking_chart(df, spain_color, other_countries_color):
         title={
             'text': 'Ranking: Relación Trabajo-Estudio por País<br><sub>Score ponderado (1=Sin relación, 5=Muy relacionado)</sub>',
             'x': 0.5,
-            'font': {'size': 18}
+            'font': {'size': 18, 'color': STORYTELLING_COLORS['text']}
         },
         xaxis_title='Score de Relación (1-5)',
         yaxis_title='Países',
-        template='plotly_white',
+        plot_bgcolor=STORYTELLING_COLORS['background'],
+        paper_bgcolor=STORYTELLING_COLORS['background'],
+        font={'size': 11, 'color': STORYTELLING_COLORS['text'], 'family': 'Arial, sans-serif'},
         height=600,
-        font={'size': 11}
+        xaxis={'title_font': {'color': STORYTELLING_COLORS['text']}, 'tickfont': {'color': STORYTELLING_COLORS['text']}},
+        yaxis={'title_font': {'color': STORYTELLING_COLORS['text']}, 'tickfont': {'color': STORYTELLING_COLORS['text']}}
     )
     
     # Añadir línea de promedio
@@ -964,15 +974,18 @@ def create_spain_vs_europe_comparison(df, spain_color, other_countries_color):
         title={
             'text': '🇪🇸 España vs 🇪🇺 Europa: Relación Trabajo-Estudio<br><sub>Comparación detallada por niveles de relación</sub>',
             'x': 0.5,
-            'font': {'size': 18}
+            'font': {'size': 18, 'color': STORYTELLING_COLORS['text']}
         },
         xaxis_title='Nivel de Relación',
         yaxis_title='Porcentaje (%)',
         barmode='group',
-        template='plotly_white',
+        plot_bgcolor=STORYTELLING_COLORS['background'],
+        paper_bgcolor=STORYTELLING_COLORS['background'],
+        font={'size': 12, 'color': STORYTELLING_COLORS['text'], 'family': 'Arial, sans-serif'},
         hovermode='closest',
-        font={'size': 12},
-        height=500
+        height=500,
+        xaxis={'title_font': {'color': STORYTELLING_COLORS['text']}, 'tickfont': {'color': STORYTELLING_COLORS['text']}},
+        yaxis={'title_font': {'color': STORYTELLING_COLORS['text']}, 'tickfont': {'color': STORYTELLING_COLORS['text']}}
     )
     
     return fig
@@ -1177,12 +1190,13 @@ def create_time_budget_satisfaction_charts(df_job_related, df_job_not_related):
         title={
             'text': 'Preferencias de Tiempo en Trabajo Remunerado<br><sub>¿Cuánto tiempo les gustaría dedicar al trabajo remunerado?</sub>',
             'x': 0.5,
-            'font': {'size': 18}
+            'font': {'size': 18, 'color': STORYTELLING_COLORS['text']}
         },
         barmode='group',
-        template='plotly_white',
-        height=600,
-        font={'size': 11}
+        plot_bgcolor=STORYTELLING_COLORS['background'],
+        paper_bgcolor=STORYTELLING_COLORS['background'],
+        font={'size': 11, 'color': STORYTELLING_COLORS['text'], 'family': 'Arial, sans-serif'},
+        height=600
     )
     
     # Actualizar ejes X
@@ -1283,12 +1297,13 @@ def create_study_abandoning_analysis_charts(df_financial, df_work_afford, df_sat
         title={
             'text': 'Consideración de Abandono de Estudios por Diferentes Motivos<br><sub>Frecuencia con la que los estudiantes consideran abandonar</sub>',
             'x': 0.5,
-            'font': {'size': 16}
+            'font': {'size': 16, 'color': STORYTELLING_COLORS['text']}
         },
         barmode='group',
-        template='plotly_white',
-        height=800,
-        font={'size': 10}
+        plot_bgcolor=STORYTELLING_COLORS['background'],
+        paper_bgcolor=STORYTELLING_COLORS['background'],
+        font={'size': 10, 'color': STORYTELLING_COLORS['text'], 'family': 'Arial, sans-serif'},
+        height=800
     )
     
     # Actualizar ejes
@@ -1354,15 +1369,17 @@ def create_performance_self_assessment_chart(df_performance):
         title={
             'text': 'Auto-evaluación del Rendimiento Académico<br><sub>¿Cómo evalúan los estudiantes su propio rendimiento?</sub>',
             'x': 0.5,
-            'font': {'size': 18}
+            'font': {'size': 18, 'color': STORYTELLING_COLORS['text']}
         },
         xaxis_title='Países',
         yaxis_title='Porcentaje (%)',
         barmode='stack',
-        template='plotly_white',
+        plot_bgcolor=STORYTELLING_COLORS['background'],
+        paper_bgcolor=STORYTELLING_COLORS['background'],
+        font={'size': 12, 'color': STORYTELLING_COLORS['text'], 'family': 'Arial, sans-serif'},
         height=600,
-        font={'size': 12},
-        xaxis={'tickangle': 45}
+        xaxis={'tickangle': 45, 'title_font': {'color': STORYTELLING_COLORS['text']}, 'tickfont': {'color': STORYTELLING_COLORS['text']}},
+        yaxis={'title_font': {'color': STORYTELLING_COLORS['text']}, 'tickfont': {'color': STORYTELLING_COLORS['text']}}
     )
     
     # Destacar España con anotación
@@ -1654,8 +1671,8 @@ def create_streamlit_abandoning_chart(df, title, subtitle):
     if df is None or df.empty:
         return go.Figure().add_annotation(text="Datos no disponibles")
     
-    spain_color = '#d62728'
-    europe_color = '#1f77b4'
+    spain_color = STORYTELLING_COLORS['spain']
+    europe_color = STORYTELLING_COLORS['europe']
     
     countries = df['Country'].tolist()
     
@@ -1671,9 +1688,9 @@ def create_streamlit_abandoning_chart(df, title, subtitle):
     sorted_high_freq = [pair[1] for pair in country_freq_pairs]
     sorted_never = [pair[2] for pair in country_freq_pairs]
     
-    # Colores destacando España
-    colors_high = [spain_color if country == 'ES' else '#ff6666' for country in sorted_countries]
-    colors_never = [spain_color if country == 'ES' else '#66cc66' for country in sorted_countries]
+    # Colores uniformes para todas las barras (sin distinción por país)
+    colors_high = [STORYTELLING_COLORS['need_work'] for country in sorted_countries]
+    colors_never = [STORYTELLING_COLORS['dont_need_work'] for country in sorted_countries]
     
     fig = go.Figure()
     
@@ -1697,18 +1714,18 @@ def create_streamlit_abandoning_chart(df, title, subtitle):
         opacity=0.8
     ))
     
+    # Aplicar layout estándar
+    fig = apply_standard_layout(
+        fig,
+        title=f'{title}<br><sub>{subtitle}</sub>',
+        height=500,
+        width=800
+    )
+    
     fig.update_layout(
-        title={
-            'text': f'{title}<br><sub>{subtitle}</sub>',
-            'x': 0.5,
-            'font': {'size': 16}
-        },
         xaxis_title='Países',
         yaxis_title='Porcentaje (%)',
         barmode='group',
-        template='plotly_white',
-        height=500,
-        font={'size': 11},
         xaxis={'tickangle': 45},
         legend={
             'orientation': 'h',
@@ -1717,6 +1734,15 @@ def create_streamlit_abandoning_chart(df, title, subtitle):
             'xanchor': 'center',
             'x': 0.5
         }
+    )
+    
+    fig.update_xaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
+    fig.update_yaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
     )
     
     # Destacar España con anotación
@@ -1773,7 +1799,7 @@ def create_spain_europe_impact_comparison(df_financial, df_work_afford):
             name='🇪🇸 España',
             x=categories,
             y=spain_values,
-            marker_color='#d62728',
+            marker_color=STORYTELLING_COLORS['spain'],
             hovertemplate='<b>España</b><br>%{x}: %{y:.1f}%<extra></extra>',
             width=0.4
         ))
@@ -1782,47 +1808,63 @@ def create_spain_europe_impact_comparison(df_financial, df_work_afford):
             name='🇪🇺 Promedio Europeo',
             x=categories,
             y=europe_values,
-            marker_color='#1f77b4',
+            marker_color=STORYTELLING_COLORS['europe'],
             hovertemplate='<b>Europa</b><br>%{x}: %{y:.1f}%<extra></extra>',
             width=0.4
         ))
         
-        # Añadir valores en las barras
+        # Añadir valores en las barras con posicionamiento correcto para barras agrupadas
+        bar_width = 0.4
+        gap_between_bars = 0.2
+        
         for i, (spain_val, europe_val) in enumerate(zip(spain_values, europe_values)):
+            # Posicionar España a la izquierda del centro
             fig.add_annotation(
-                x=i,
+                x=i - (bar_width/2 + gap_between_bars/4),
                 y=spain_val + 1,
                 text=f"{spain_val:.1f}%",
                 showarrow=False,
-                font={'color': '#d62728', 'size': 12, 'family': 'Arial Black'}
+                font={'color': STORYTELLING_COLORS['spain'], 'size': 12, 'family': 'Arial Black'},
+                xanchor='center'
             )
+            # Posicionar Europa a la derecha del centro
             fig.add_annotation(
-                x=i,
+                x=i + (bar_width/2 + gap_between_bars/4),
                 y=europe_val + 1,
                 text=f"{europe_val:.1f}%",
                 showarrow=False,
-                font={'color': '#1f77b4', 'size': 12, 'family': 'Arial Black'}
+                font={'color': STORYTELLING_COLORS['europe'], 'size': 12, 'family': 'Arial Black'},
+                xanchor='center'
             )
     
+    # Aplicar layout estándar
+    fig = apply_standard_layout(
+        fig,
+        title='🇪🇸 España vs 🇪🇺 Europa: Impacto del Trabajo en los Estudios<br><sub>Comparación de frecuencia de consideración de abandono</sub>',
+        height=500,
+        width=800
+    )
+    
     fig.update_layout(
-        title={
-            'text': '🇪🇸 España vs 🇪🇺 Europa: Impacto del Trabajo en los Estudios<br><sub>Comparación de frecuencia de consideración de abandono</sub>',
-            'x': 0.5,
-            'font': {'size': 16}
-        },
         xaxis_title='Motivos de Consideración de Abandono',
         yaxis_title='Porcentaje (%)',
         barmode='group',
-        template='plotly_white',
-        height=500,
-        font={'size': 12},
         legend={
             'orientation': 'h',
             'yanchor': 'bottom',
-            'y': -0.2,
+            'y': -0.3,
             'xanchor': 'center',
             'x': 0.5
         }
+    )
+    
+    fig.update_xaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
+    fig.update_yaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
     )
     
     return fig
@@ -1914,14 +1956,16 @@ def create_streamlit_work_motivation_chart(df):
         title={
             'text': 'Necesidad de Trabajar para Costear Estudios<br><sub>Porcentaje de estudiantes que necesitan trabajar</sub>',
             'x': 0.5,
-            'font': {'size': 16}
+            'font': {'size': 16, 'color': STORYTELLING_COLORS['text']}
         },
         xaxis_title='Países',
         yaxis_title='Porcentaje (%)',
-        template='plotly_white',
+        plot_bgcolor=STORYTELLING_COLORS['background'],
+        paper_bgcolor=STORYTELLING_COLORS['background'],
+        font={'size': 11, 'color': STORYTELLING_COLORS['text'], 'family': 'Arial, sans-serif'},
         height=500,
-        font={'size': 11},
-        xaxis={'tickangle': 45}
+        xaxis={'tickangle': 45, 'title_font': {'color': '#000000', 'size': 14, 'family': 'Arial, sans-serif'}, 'tickfont': {'color': '#000000', 'size': 11, 'family': 'Arial, sans-serif'}},
+        yaxis={'title_font': {'color': '#000000', 'size': 14, 'family': 'Arial, sans-serif'}, 'tickfont': {'color': '#000000', 'size': 11, 'family': 'Arial, sans-serif'}}
     )
     
     # Destacar España
@@ -1982,14 +2026,16 @@ def create_streamlit_work_study_relationship_chart(df):
         title={
             'text': 'Relación entre Trabajo y Estudios<br><sub>Porcentaje de estudiantes con trabajo relacionado con sus estudios</sub>',
             'x': 0.5,
-            'font': {'size': 16}
+            'font': {'size': 16, 'color': STORYTELLING_COLORS['text']}
         },
         xaxis_title='Países',
         yaxis_title='Porcentaje (%)',
-        template='plotly_white',
+        plot_bgcolor=STORYTELLING_COLORS['background'],
+        paper_bgcolor=STORYTELLING_COLORS['background'],
+        font={'size': 11, 'color': STORYTELLING_COLORS['text'], 'family': 'Arial, sans-serif'},
         height=500,
-        font={'size': 11},
-        xaxis={'tickangle': 45}
+        xaxis={'tickangle': 45, 'title_font': {'color': '#000000', 'size': 14, 'family': 'Arial, sans-serif'}, 'tickfont': {'color': '#000000', 'size': 11, 'family': 'Arial, sans-serif'}},
+        yaxis={'title_font': {'color': '#000000', 'size': 14, 'family': 'Arial, sans-serif'}, 'tickfont': {'color': '#000000', 'size': 11, 'family': 'Arial, sans-serif'}}
     )
     
     # Destacar España

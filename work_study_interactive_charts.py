@@ -15,12 +15,15 @@ from storytelliing_charts import (
     PreprocessedDatasetsNamesRelationshipBetweenWorkAndStudy
 )
 
+# Importar configuración unificada de colores
+from color_config import STORYTELLING_COLORS, COLOR_PALETTES, apply_standard_layout
+
 # Configuración de colores para storytelling
-SPAIN_COLOR = '#C41E3A'  # Rojo bandera española
-EUROPE_COLOR = '#003DA5'  # Azul europeo
-NEUTRAL_COLOR = '#808080'  # Gris neutro
-SUCCESS_COLOR = '#2E8B57'  # Verde para valores positivos
-WARNING_COLOR = '#FF8C00'  # Naranja para alertas
+SPAIN_COLOR = STORYTELLING_COLORS['spain']
+EUROPE_COLOR = STORYTELLING_COLORS['europe']
+NEUTRAL_COLOR = STORYTELLING_COLORS['text_light']
+SUCCESS_COLOR = STORYTELLING_COLORS['dont_need_work']
+WARNING_COLOR = STORYTELLING_COLORS['warning']
 
 def create_storytelling_work_study_charts():
     """
@@ -106,26 +109,35 @@ def create_hero_spain_europe_comparison(df):
     europe_related = sum(europe_vals[:3])
     gap = europe_related - spain_related
     
+    # Aplicar layout estándar
+    fig = apply_standard_layout(
+        fig,
+        title=f'🇪🇸 España vs 🇪🇺 Europa: Relación Trabajo-Estudio<br>' +
+              f'<sub>España: {spain_related:.1f}% | Europa: {europe_related:.1f}% | Brecha: {gap:.1f} puntos</sub>',
+        height=500,
+        width=800
+    )
+    
     fig.update_layout(
-        title={
-            'text': f'🇪🇸 España vs 🇪🇺 Europa: Relación Trabajo-Estudio<br>' +
-                   f'<sub>España: {spain_related:.1f}% | Europa: {europe_related:.1f}% | Brecha: {gap:.1f} puntos</sub>',
-            'x': 0.5,
-            'font': {'size': 22}
-        },
         xaxis_title='Nivel de Relación',
         yaxis_title='Porcentaje de Estudiantes (%)',
         barmode='group',
-        template='plotly_white',
-        height=500,
-        font={'size': 14},
         legend={
             'orientation': 'h',
             'yanchor': 'bottom',
-            'y': -0.2,
-            'xanchor': 'center',
-            'x': 0.5
+            'y': 1,
+            'xanchor': 'right',
+            'x': 1
         }
+    )
+    
+    fig.update_xaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
+    fig.update_yaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
     )
     
     # Añadir anotación con insight clave
@@ -180,18 +192,27 @@ def create_european_ranking_chart(df):
         textposition='outside'
     ))
     
+    # Aplicar layout estándar
+    fig = apply_standard_layout(
+        fig,
+        title=f'Ranking Europeo: Relación Trabajo-Estudio<br>' +
+              f'<sub>España en posición {spain_position}/{total_countries}</sub>',
+        height=700,
+        width=800
+    )
+    
     fig.update_layout(
-        title={
-            'text': f'Ranking Europeo: Relación Trabajo-Estudio<br>' +
-                   f'<sub>España en posición {spain_position}/{total_countries}</sub>',
-            'x': 0.5,
-            'font': {'size': 20}
-        },
         xaxis_title='Porcentaje de Trabajo Relacionado con Estudios (%)',
         yaxis_title='Países',
-        template='plotly_white',
-        height=700,
-        font={'size': 12}
+    )
+    
+    fig.update_xaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
+    fig.update_yaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
     )
     
     # Línea de promedio
@@ -272,9 +293,10 @@ def create_relationship_levels_chart(df):
         xaxis_title='Países',
         yaxis_title='Porcentaje (%)',
         barmode='stack',
-        template='plotly_white',
+        plot_bgcolor=STORYTELLING_COLORS['background'],
+        paper_bgcolor=STORYTELLING_COLORS['background'],
+        font={'size': 11, 'color': STORYTELLING_COLORS['text'], 'family': 'Arial, sans-serif'},
         height=600,
-        font={'size': 11},
         legend={
             'orientation': 'h',
             'yanchor': 'bottom',
@@ -283,6 +305,15 @@ def create_relationship_levels_chart(df):
             'x': 0.5
         },
         xaxis={'tickangle': 45}
+    )
+    
+    fig.update_xaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
+    fig.update_yaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
     )
     
     # Destacar España
@@ -354,9 +385,19 @@ def create_gap_analysis_chart(df):
         },
         xaxis_title='Países',
         yaxis_title='Porcentaje de Trabajo Relacionado (%)',
-        template='plotly_white',
-        height=500,
-        font={'size': 14}
+        plot_bgcolor=STORYTELLING_COLORS['background'],
+        paper_bgcolor=STORYTELLING_COLORS['background'],
+        font={'size': 14, 'color': STORYTELLING_COLORS['text'], 'family': 'Arial, sans-serif'},
+        height=500
+    )
+    
+    fig.update_xaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
+    )
+    fig.update_yaxes(
+        title_font=dict(color='#000000', size=14, family='Arial, sans-serif'),
+        tickfont=dict(color='#000000', size=11, family='Arial, sans-serif')
     )
     
     return fig
