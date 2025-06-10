@@ -4,6 +4,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import numpy as np
 import streamlit as st
+from ..core.color_config import STORYTELLING_COLORS, apply_standard_layout
 
 
 def process_excel_for_sankey(file_path, connection_type):
@@ -181,25 +182,25 @@ def create_organized_sankey():
 
     # 1. age con field of study
     age_field_data = process_excel_for_sankey(
-        "sankey_excels/E8_age__field_of_study__ES.xlsx", "age_field"
+        "data/sankey_excels/E8_age__field_of_study__ES.xlsx", "age_field"
     )
     all_data.extend(age_field_data)
 
     # 2. age con housing accommodation
     age_housing_data = process_excel_for_sankey(
-        "sankey_excels/E8_age__housing_accomodation__ES.xlsx", "age_housing"
+        "data/sankey_excels/E8_age__housing_accomodation__ES.xlsx", "age_housing"
     )
     all_data.extend(age_housing_data)
 
     # 3. field of study con género
     field_sex_data = process_excel_for_sankey(
-        "sankey_excels/E8_field_of_study__sex__ES.xlsx", "field_sex"
+        "data/sankey_excels/E8_field_of_study__sex__ES.xlsx", "field_sex"
     )
     all_data.extend(field_sex_data)
 
     # 4. costs con housing accommodation
     costs_housing_data = process_excel_for_sankey(
-        "sankey_excels/E8_costs_all_total_monly__housing_accomodation__ES.xlsx",
+        "data/sankey_excels/E8_costs_all_total_monly__housing_accomodation__ES.xlsx",
         "costs_housing",
     )
     all_data.extend(costs_housing_data)

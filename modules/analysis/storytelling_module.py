@@ -6,7 +6,7 @@ la necesidad de trabajar para costear estudios universitarios
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
-from storytelliing_charts import read_work_motive_afford_study_dataset
+from ..core.data_loaders import read_work_motive_afford_study_dataset
 
 class WorkStudyStorytellingCharts:
     """
@@ -17,7 +17,7 @@ class WorkStudyStorytellingCharts:
         """Inicializa la clase cargando los datos"""
         self.df = read_work_motive_afford_study_dataset()
         # Importar configuración unificada de colores
-        from color_config import STORYTELLING_COLORS
+        from ..core.color_config import STORYTELLING_COLORS
         self.colors = STORYTELLING_COLORS
         
     def get_chart_need_vs_no_need(self, height=600, width=1200):
@@ -51,14 +51,20 @@ class WorkStudyStorytellingCharts:
         # Crear el gráfico
         fig = go.Figure()
         
+        # Preparar datos combinados para hover más informativo
+        combined_hover_data = []
+        for i in range(len(countries)):
+            combined_hover_data.append([need_to_work.iloc[i], dont_need_to_work.iloc[i]])
+        
         # Barra para "Necesitan Trabajar" - usando color NEGATIVE (rojo) por ser problemático
         fig.add_trace(go.Bar(
             name='Necesitan Trabajar para Pagar Estudios',
             x=countries,
             y=need_to_work,
             marker_color=self.colors['need_work'],
+            customdata=combined_hover_data,  # Datos combinados para hover
             hovertemplate='<b>%{x}</b><br>' + 
-                         'Necesitan Trabajar: %{y:.1f}%<br>' +
+                         'Necesitan Trabajar: %{customdata[0]:.1f}%<br>' +
                          '<extra></extra>',
             text=[f'{val:.1f}%' for val in need_to_work],
             textposition='inside',
@@ -72,8 +78,9 @@ class WorkStudyStorytellingCharts:
             y=dont_need_to_work,
             base=need_to_work,
             marker_color=self.colors['dont_need_work'],
+            customdata=combined_hover_data,  # Datos combinados para hover
             hovertemplate='<b>%{x}</b><br>' + 
-                         'No Necesitan Trabajar: %{y:.1f}%<br>' +
+                         'No Necesitan Trabajar: %{customdata[1]:.1f}%<br>' +
                          '<extra></extra>',
             text=[f'{val:.1f}%' for val in dont_need_to_work],
             textposition='inside',
@@ -105,7 +112,7 @@ class WorkStudyStorytellingCharts:
             )
         
         # Aplicar layout estándar
-        from color_config import apply_standard_layout
+        from ..core.color_config import apply_standard_layout
         fig = apply_standard_layout(
             fig,
             title='<b>Necesidad de Trabajar para Costear Estudios por País Europeo</b><br>' +
@@ -226,7 +233,7 @@ class WorkStudyStorytellingCharts:
         ))
         
         # Aplicar layout estándar
-        from color_config import apply_standard_layout
+        from ..core.color_config import apply_standard_layout
         fig = apply_standard_layout(
             fig,
             title='<b>¿Qué tan necesario es trabajar para poder pagar los estudios?</b><br>' +

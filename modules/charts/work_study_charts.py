@@ -10,13 +10,10 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.io as pio
 import numpy as np
-from storytelliing_charts import (
-    read_work_study_relationship_dataset,
-    PreprocessedDatasetsNamesRelationshipBetweenWorkAndStudy
-)
+from ..core.data_loaders import read_work_study_relationship_dataset, PreprocessedDatasetsNamesRelationshipBetweenWorkAndStudy
 
 # Importar configuración unificada de colores
-from color_config import STORYTELLING_COLORS, COLOR_PALETTES, apply_standard_layout
+from ..core.color_config import STORYTELLING_COLORS, COLOR_PALETTES, apply_standard_layout
 
 # Configuración de colores para storytelling
 SPAIN_COLOR = STORYTELLING_COLORS['spain']
@@ -61,18 +58,18 @@ def create_hero_spain_europe_comparison(df):
     # Datos de España
     spain_values = {
         'Muy Relacionado': spain_data['Very_Closely_Value'],
-        'Bastante Relacionado': spain_data['Rather_Closely_Value'],
-        'Algo Relacionado': spain_data['To_Some_Extent_Value'],
-        'Poco Relacionado': spain_data['Rather_Not_Value'],
+        'Bastante Relacionado': spain_data['Closely_Value'],
+        'Algo Relacionado': spain_data['Somewhat_Value'],
+        'Poco Relacionado': spain_data['Not_Closely_Value'],
         'Nada Relacionado': spain_data['Not_At_All_Value']
     }
     
     # Promedio europeo
     europe_values = {
         'Muy Relacionado': europe_data['Very_Closely_Value'].mean(),
-        'Bastante Relacionado': europe_data['Rather_Closely_Value'].mean(),
-        'Algo Relacionado': europe_data['To_Some_Extent_Value'].mean(),
-        'Poco Relacionado': europe_data['Rather_Not_Value'].mean(),
+        'Bastante Relacionado': europe_data['Closely_Value'].mean(),
+        'Algo Relacionado': europe_data['Somewhat_Value'].mean(),
+        'Poco Relacionado': europe_data['Not_Closely_Value'].mean(),
         'Nada Relacionado': europe_data['Not_At_All_Value'].mean()
     }
     
@@ -163,8 +160,8 @@ def create_european_ranking_chart(df):
     df_rank = df.copy()
     df_rank['Related_Total'] = (
         df_rank['Very_Closely_Value'].fillna(0) + 
-        df_rank['Rather_Closely_Value'].fillna(0) + 
-        df_rank['To_Some_Extent_Value'].fillna(0)
+        df_rank['Closely_Value'].fillna(0) + 
+        df_rank['Somewhat_Value'].fillna(0)
     )
     
     # Ordenar por score
@@ -236,9 +233,9 @@ def create_relationship_levels_chart(df):
     
     # Preparar datos para stack
     very_closely = df['Very_Closely_Value'].fillna(0).tolist()
-    rather_closely = df['Rather_Closely_Value'].fillna(0).tolist()
-    to_some_extent = df['To_Some_Extent_Value'].fillna(0).tolist()
-    rather_not = df['Rather_Not_Value'].fillna(0).tolist()
+    rather_closely = df['Closely_Value'].fillna(0).tolist()
+    to_some_extent = df['Somewhat_Value'].fillna(0).tolist()
+    rather_not = df['Not_Closely_Value'].fillna(0).tolist()
     not_at_all = df['Not_At_All_Value'].fillna(0).tolist()
     
     fig = go.Figure()
@@ -343,8 +340,8 @@ def create_gap_analysis_chart(df):
     # Calcular trabajo relacionado total
     df_comp['Related_Total'] = (
         df_comp['Very_Closely_Value'].fillna(0) + 
-        df_comp['Rather_Closely_Value'].fillna(0) + 
-        df_comp['To_Some_Extent_Value'].fillna(0)
+                df_comp['Closely_Value'].fillna(0) +
+        df_comp['Somewhat_Value'].fillna(0)
     )
     
     # Ordenar por score
@@ -434,23 +431,21 @@ def generate_storytelling_summary(df):
     """
     # Datos de España
     spain_data = df[df['Country'] == 'ES'].iloc[0]
-    spain_related = (spain_data['Very_Closely_Value'] + 
-                    spain_data['Rather_Closely_Value'] + 
-                    spain_data['To_Some_Extent_Value'])
+    spain_related = (spain_data['Very_Closely_Value'] +
+                     spain_data['Closely_Value'] +
+                     spain_data['Somewhat_Value'])
     
     # Promedio europeo
     europe_data = df[df['Country'] != 'ES']
-    europe_related = (europe_data['Very_Closely_Value'].mean() + 
-                     europe_data['Rather_Closely_Value'].mean() + 
-                     europe_data['To_Some_Extent_Value'].mean())
+    europe_related = (europe_data['Very_Closely_Value'].mean() +
+                      europe_data['Closely_Value'].mean() +
+                      europe_data['Somewhat_Value'].mean())
     
-    # Ranking
+    # Ranking calculado
     df_rank = df.copy()
-    df_rank['Related_Total'] = (
-        df_rank['Very_Closely_Value'].fillna(0) + 
-        df_rank['Rather_Closely_Value'].fillna(0) + 
-        df_rank['To_Some_Extent_Value'].fillna(0)
-    )
+    df_rank['Related_Total'] = (df_rank['Very_Closely_Value'].fillna(0) +
+                                df_rank['Closely_Value'].fillna(0) +
+                                df_rank['Somewhat_Value'].fillna(0))
     df_rank = df_rank.sort_values('Related_Total', ascending=False)
     spain_position = df_rank[df_rank['Country'] == 'ES'].index[0] + 1
     

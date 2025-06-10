@@ -1,45 +1,30 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
-from enum import Enum
 
-
-class Colors(Enum):
-    EUROPE = "#1E88E5"
-    NEGATIVE = "#E53935"
-    SPAIN = "#FDD835"
-    POSITIVE = "#43A047"
-    WARNING = "#EF6C00"
-    DANGER = "#B71C1C"
-
-
-from advanced_demographic_charts import (
+from modules.charts.demographic_charts import (
     create_field_of_study_comparison_chart,
     create_living_with_parents_comparison_chart,
     create_gender_comparison_chart,
     create_age_comparison_chart,
 )
 
-from storytelling_module import WorkStudyStorytellingCharts
+from modules.analysis.storytelling_module import WorkStudyStorytellingCharts
 
-from work_study_interactive_charts import (
+from modules.charts.work_study_charts import (
     create_storytelling_work_study_charts,
     generate_storytelling_summary,
 )
 
-from storytelliing_charts import get_work_impact_figures_for_streamlit
+from modules.charts.impact_charts import get_work_impact_figures_for_streamlit
 
-from academic_perception_storytelling_chart import generate_academic_perception_analysis
+from modules.charts.perception_charts import generate_academic_perception_analysis
 
-from happiness_work_relation_chart import generate_happiness_work_relation_analysis
+from modules.charts.perception_charts import generate_happiness_work_relation_analysis
 
-from cost_map_chart import generate_europe_cost_heatmap, get_cost_statistics
+from modules.charts.geographic_charts import generate_europe_cost_heatmap, get_cost_statistics
 
-from sankey_student_journey_chart import get_sankey_for_streamlit
+from modules.analysis.sankey_analysis import get_sankey_for_streamlit
 
-from age_isotype_chart import create_age_isotype_for_streamlit
+from modules.analysis.isotype_analysis import create_age_isotype_for_streamlit
 
 
 
@@ -71,8 +56,7 @@ st.markdown(
         --text-medium: #34495E;         /* Texto medio */
         --bg-light: #F8F9FA;            /* Fondo claro */
         --border-light: #DEE2E6;        /* Borde claro */
-        --text-white: #FFFFFF;
-        --text-light: #6C757D;
+
     }
     .stApp {
         background-color: #ffffff !important;
@@ -85,17 +69,12 @@ st.markdown(
         padding-top: 2rem !important;
     }
     
-    .css-1d391kg {
-        background-color: #f8f9fa !important;
-    }
+
     .stApp > div > div > div > div > button,
     .stApp button[data-testid="collapsedControl"],
     .stApp button[title="Show sidebar"],
     .stApp button[title="Hide sidebar"],
-    .css-1outpf7, 
-    .css-1outpf7:hover, 
-    .css-1outpf7:active, 
-    .css-1outpf7:focus,
+
     [data-testid="collapsedControl"], 
     [data-testid="collapsedControl"]:hover,
     [data-testid="collapsedControl"]:active,
@@ -115,8 +94,7 @@ st.markdown(
     .stApp button[data-testid="collapsedControl"] svg,
     .stApp button[title="Show sidebar"] svg,
     .stApp button[title="Hide sidebar"] svg,
-    .css-1outpf7 svg, 
-    .css-1outpf7 svg path,
+
     [data-testid="collapsedControl"] svg,
     [data-testid="collapsedControl"] svg path,
     button[title="Show sidebar"] svg,
@@ -129,8 +107,7 @@ st.markdown(
     }
     .stSidebar button,
     .stSidebar button:hover,
-    .css-1kyxreq button,
-    .css-1kyxreq button:hover {
+    .stSidebar button:hover {
         background-color: #ffffff !important;
         color: #2C3E50 !important;
         border: 2px solid #DEE2E6 !important;
@@ -201,24 +178,7 @@ st.markdown(
         padding-left: 1rem;
     }
     
-    .highlight-stat {
-         background: linear-gradient(135deg, var(--light-gray) 0%, #ffffff 100%) !important;
-         padding: 2rem;
-         border-radius: 15px;
-         border-left: 6px solid var(--accent-blue);
-         margin: 2rem 0;
-         box-shadow: 0 4px 6px rgba(0,0,0,0.07);
-         transition: transform 0.2s ease;
-     }
-    
-         .highlight-stat:hover {
-         transform: translateY(-2px);
-         box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-     }
-     
-     .highlight-stat p, .highlight-stat h3, .highlight-stat h4, .highlight-stat h5 {
-         color: var(--text-dark) !important;
-     }
+
     
          .insight-box {
          background: linear-gradient(135deg, #E3F2FD 0%, #F0F8FF 100%) !important;
@@ -324,15 +284,7 @@ st.markdown(
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
-    .stats-container {
-        display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
-        margin: 2rem 0;
-        gap: 1rem;
-        width: 100% !important;
-        align-items: stretch;
-    }
+
     
          .stat-item {
          text-align: center;
@@ -367,17 +319,7 @@ st.markdown(
      }
     
 
-    .nav-link {
-        color: var(--primary-blue);
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.2s ease;
-    }
-    
-    .nav-link:hover {
-        color: var(--accent-blue);
-        text-decoration: underline;
-    }
+
     
     .chart-placeholder {
          border: 2px dashed var(--border-light);
@@ -395,27 +337,7 @@ st.markdown(
      }
      
 
-     .stSelectbox > div > div {
-         background-color: white !important;
-         color: var(--text-dark) !important;
-     }
-     
-     .stTabs > div > div > div > div {
-         background-color: transparent !important;
-         color: var(--text-dark) !important;
-     }
-     
-     .stColumn > div {
-         background-color: transparent !important;
-     }
-     
-    [data-testid="stMarkdownContainer"] {
-         background-color: transparent !important;
-     }
-     
-     [data-testid="stMarkdownContainer"] p {
-         color: var(--text-dark) !important;
-     }
+
     
          .chart-placeholder h4 {
          color: var(--primary-blue) !important;
@@ -482,18 +404,7 @@ st.markdown(
         padding: 1.5rem 0 !important;
         background: transparent !important;
     }
-    .stTabs [data-baseweb="tab"][aria-selected="true"]::after {
-        content: '';
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 0;
-        height: 0;
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        border-bottom: 8px solid var(--primary-blue);
-    }
+
     
 
     @media (max-width: 768px) {
@@ -509,11 +420,7 @@ st.markdown(
             font-size: 1.4rem;
         }
         
-        .stats-container {
-            flex-direction: column;
-        }
-        
-        .highlight-stat, .insight-box, .conclusion-box {
+        .insight-box, .conclusion-box {
             padding: 1.5rem;
         }
         
@@ -565,33 +472,7 @@ st.sidebar.markdown(
     .sidebar-nav-item:last-child {
         border-bottom: none;
     }
-    .sidebar-note {
-        color: rgba(255,255,255,0.8) !important;
-        font-size: 0.8rem;
-        font-style: italic;
-        margin-top: 1rem;
-        text-align: center;
-    }
-    .sidebar-info {
-        background: linear-gradient(135deg, #C41E3A 0%, #E74C3C 100%);
-        padding: 1.5rem;
-        border-radius: 10px;
-        margin-top: 1rem;
-    }
-    .sidebar-info h4 {
-        color: white !important;
-        margin-bottom: 0.8rem;
-        text-align: center;
-        font-size: 1rem;
-    }
-    .sidebar-info ul {
-        color: white !important;
-        padding-left: 1rem;
-    }
-    .sidebar-info li {
-        color: white !important;
-        margin-bottom: 0.3rem;
-    }
+
     </style>
     """,
     unsafe_allow_html=True,
@@ -911,6 +792,9 @@ with col2:
             "Error en Mapa de Costes", "Error cargando datos de costes"
         )
 
+st.markdown("<br><br>", unsafe_allow_html=True)
+
+
 col1, col2 = st.columns([2, 1])
 
 with col1:
@@ -938,6 +822,7 @@ with col2:
     """,
         unsafe_allow_html=True,
     )
+st.markdown("<br><br>", unsafe_allow_html=True)
 
 col1, col2 = st.columns([1, 2])
 
@@ -973,6 +858,8 @@ with col2:
     except Exception as e:
         st.error(f"Error cargando gráfico de edad: {e}")
         show_chart_placeholder("Error en Distribución por Edad", "Error cargando datos")
+
+st.markdown("<br><br>", unsafe_allow_html=True)
 
 col1, col2 = st.columns([2, 1])
 
@@ -1042,6 +929,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.markdown("<br><br>", unsafe_allow_html=True)
+
 col1, col2 = st.columns([1, 2])
 
 with col1:
@@ -1069,6 +958,8 @@ with col2:
         show_chart_placeholder("Error en Campo de Estudio", "Error cargando datos")
 
 
+
+st.markdown("<br><br>", unsafe_allow_html=True)
 
 st.markdown(
     '<h3 class="subsection-header">Trayectoria Académica y Perfil Socioeconómico en España</h3>',
@@ -1628,7 +1519,7 @@ with col1:
         img_col1, img_col2, img_col3 = st.columns([1, 0.5, 1])
         with img_col1:
             st.image(
-                "images/1_of_2_students_work.png",
+                "assets/images/1_of_2_students_work.png",
                 width=500,
                 caption="1 de cada 2 estudiantes trabaja",
             )
@@ -1684,7 +1575,7 @@ with col1:
         img_col1, img_col2, img_col3 = st.columns([1, 0.5, 1])
         with img_col1:
             st.image(
-                "images/oldest_students_help.png",
+                "assets/images/oldest_students_help.png",
                 width=600,
                 caption="Estudiantes mayores necesitan más apoyo",
             )
@@ -1730,7 +1621,7 @@ with col1:
         img_col1, img_col2, img_col3 = st.columns([1, 0.5, 1])
         with img_col1:
             st.image(
-                "images/equality_gender_students.png",
+                "assets/images/equality_gender_students.png",
                 width=500,
                 caption="Igualdad de género en necesidad de trabajar",
             )
@@ -1765,7 +1656,7 @@ with col1:
         img_col1, img_col2, img_col3 = st.columns([1, 0.5, 1])
         with img_col1:
             st.image(
-                "images/rent_problem_student.png",
+                "assets/images/rent_problem_student.png",
                 width=500,
                 caption="Crisis de emancipación estudiantil",
             )
@@ -1812,7 +1703,7 @@ with col1:
         img_col1, img_col2, img_col3 = st.columns([1, 0.5, 1])
         with img_col1:
             st.image(
-                "images/not_related_jobs_student.png",
+                "assets/images/not_related_jobs_student.png",
                 width=500,
                 caption="Trabajos no relacionados con estudios",
             )
@@ -1867,7 +1758,7 @@ with col1:
         img_col1, img_col2, img_col3 = st.columns([1, 0.5, 1])
         with img_col1:
             st.image(
-                "images/health_problems_student.png",
+                "assets/images/health_problems_student.png",
                 width=500,
                 caption="Problemas de salud y bienestar estudiantil",
             )
@@ -1913,7 +1804,7 @@ with col1:
         img_col1, img_col2, img_col3 = st.columns([1, 0.5, 1])
         with img_col1:
             st.image(
-                "images/general_problems_students.png",
+                "assets/images/general_problems_students.png",
                 width=500,
                 caption="Problemas estructurales del sistema educativo",
             )
@@ -2003,7 +1894,7 @@ with logo_col2:
     with sub_col1:
         try:
             st.image(
-                "logos/eurostudent_logo.png",
+                "assets/logos/eurostudent_logo.png",
                 caption="EUROSTUDENT - Fuente de datos",
                 use_container_width=True,
             )
@@ -2013,7 +1904,7 @@ with logo_col2:
     with sub_col2:
         try:
             st.image(
-                "logos/uoc_masterbrand_2linies_posititiu.png",
+                "assets/logos/uoc_masterbrand_2linies_posititiu.png",
                 caption="UOC - Institución académica",
                 use_container_width=True,
             )

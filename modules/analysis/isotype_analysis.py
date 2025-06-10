@@ -3,6 +3,8 @@ import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 import numpy as np
+# Importar configuración unificada de colores
+from ..core.color_config import STORYTELLING_COLORS, apply_standard_layout
 
 def load_age_relationship_data():
     """
@@ -10,7 +12,7 @@ def load_age_relationship_data():
     """
     try:
         # Cargar el archivo Excel
-        df = pd.read_excel("preprocessed_relationship_study_job/E8_age__relationship_job_study__ES.xlsx")
+        df = pd.read_excel("data/preprocessed_relationship_study_job/E8_age__relationship_job_study__ES.xlsx")
         
         print("Columnas disponibles:")
         print(df.columns.tolist())

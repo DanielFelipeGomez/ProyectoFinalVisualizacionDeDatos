@@ -3,13 +3,14 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
+from ..core.color_config import STORYTELLING_COLORS, apply_standard_layout
 
 
 def read_cost_dataset():
     """Lee el dataset de costes mensuales por país"""
     try:
         # Leer el archivo Excel de costes
-        df = pd.read_excel("preprocessed_excels/E8_costs_all_total__all_students__all_contries.xlsx")
+        df = pd.read_excel("data/preprocessed_excels/E8_costs_all_total__all_students__all_contries.xlsx")
         return df
     except Exception as e:
         print(f"Error leyendo dataset de costes: {e}")

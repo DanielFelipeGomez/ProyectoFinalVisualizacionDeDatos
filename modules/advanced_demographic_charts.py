@@ -7,17 +7,17 @@ from enum import Enum
 
 # Clase para los datasets preprocessados
 class PreprocessedDatasetsNamesWorkMotiveAffordStudy(Enum):
-    WORK_MOTIVE_AFFORD_STUDY = 'preprocessed_excels/E8_work_motive_afford_study_5__all_students__all_contries.xlsx'
-    WORK_MOTIVE_AFFORD_STUDY_E_SEX = 'preprocessed_excels/E8_work_motive_afford_study_5__e_sex__all_contries.xlsx'
-    WORK_MOTIVE_AFFORD_STUDY_E_AGE = 'preprocessed_excels/E8_work_motive_afford_study_5__e_age__all_contries.xlsx'
-    WORK_MOTIVE_AFFORD_STUDY_E_FIELD_OF_STUDY = 'preprocessed_excels/E8_work_motive_afford_study_5__e_field_of_study__all_contries.xlsx'
-    WORK_MOTIVE_AFFORD_STUDY_E_FINANCIAL_DIFFICULTIES = 'preprocessed_excels/E8_work_motive_afford_study_5__e_financial_difficulties__all_contries.xlsx'
-    WORK_MOTIVE_AFFORD_STUDY_E_EDUPAR = 'preprocessed_excels/E8_edupar_5__s_works_to_afford_to_study__all_contries.xlsx'
-    WORK_MOTIVE_AFFORD_STUDY_E_NOTLIVINGWITHPARENTS = 'preprocessed_excels/E8_work_motive_afford_study_5__e_notlivingwithparents__all_contries.xlsx'
-    WORK_MOTIVE_AFFORD_STUDY_S_PARENTS_FINANCIAL_STATUS = 'preprocessed_excels/E8_work_motive_afford_study_5__s_parents_financial_status__all_contries.xlsx'
+    WORK_MOTIVE_AFFORD_STUDY = 'data/preprocessed_excels/E8_work_motive_afford_study_5__all_students__all_contries.xlsx'
+    WORK_MOTIVE_AFFORD_STUDY_E_SEX = 'data/preprocessed_excels/E8_work_motive_afford_study_5__e_sex__all_contries.xlsx'
+    WORK_MOTIVE_AFFORD_STUDY_E_AGE = 'data/preprocessed_excels/E8_work_motive_afford_study_5__e_age__all_contries.xlsx'
+    WORK_MOTIVE_AFFORD_STUDY_E_FIELD_OF_STUDY = 'data/preprocessed_excels/E8_work_motive_afford_study_5__e_field_of_study__all_contries.xlsx'
+    WORK_MOTIVE_AFFORD_STUDY_E_FINANCIAL_DIFFICULTIES = 'data/preprocessed_excels/E8_work_motive_afford_study_5__e_financial_difficulties__all_contries.xlsx'
+    WORK_MOTIVE_AFFORD_STUDY_E_EDUPAR = 'data/preprocessed_excels/E8_edupar_5__s_works_to_afford_to_study__all_contries.xlsx'
+    WORK_MOTIVE_AFFORD_STUDY_E_NOTLIVINGWITHPARENTS = 'data/preprocessed_excels/E8_work_motive_afford_study_5__e_notlivingwithparents__all_contries.xlsx'
+    WORK_MOTIVE_AFFORD_STUDY_S_PARENTS_FINANCIAL_STATUS = 'data/preprocessed_excels/E8_work_motive_afford_study_5__s_parents_financial_status__all_contries.xlsx'
 
 # Importar configuración unificada de colores
-from color_config import STORYTELLING_COLORS, COLOR_PALETTES, apply_standard_layout
+from .color_config import STORYTELLING_COLORS, COLOR_PALETTES, apply_standard_layout
 
 def translate_age_category(category):
     """
