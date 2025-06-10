@@ -1,159 +1,66 @@
-# 🎓 Trabajar y estudiar en Europa: Análisis Interactivo
+# Proyecto Final de la asignatura de Visualización de Datos
+## Autor: Daniel Felipe Gomez Aristizabal
 
-Una aplicación interactiva de Streamlit que analiza la realidad de los estudiantes europeos que necesitan trabajar para costear sus estudios, con especial foco en España.
 
-## 📊 Características
+### Descripción
 
-- **Análisis comparativo** entre España y otros 24 países europeos
-- **Visualizaciones interactivas** con Plotly
-- **Múltiples perspectivas**: demográficas, socioeconómicas y de bienestar
-- **Storytelling visual** con datos del estudio EUROSTUDENT
+En este repositorio presento una aplicación interactiva de Streamlit en la que he creado un storytelling donde analizo la realidad de los estudiantes europeos que necesitan trabajar para costear sus estudios, con especial foco en España.
 
-## 🔧 Características Técnicas
+### Tecnologías utilizadas
 
-### Arquitectura Modular Mejorada
-- **📦 Módulo Core**: Funcionalidades centrales (carga de datos, configuración)
-- **📊 Módulo Charts**: Gráficos organizados por categoría temática
-- **🔍 Módulo Analysis**: Análisis especializados y narrativa
-- **🎨 Configuración unificada**: Colores y estilos consistentes
-- **⚡ Carga optimizada**: Data loaders centralizados y eficientes
+- Streamlit
+- Plotly
+- Pandas
+- Numpy
+- Matplotlib
+- OpenPyXL
 
-### Tecnologías Utilizadas
-- **Streamlit**: Framework principal para la aplicación web
-- **Plotly**: Visualizaciones interactivas y mapas
-- **Pandas**: Manipulación y análisis de datos
-- **NumPy**: Operaciones numéricas
-- **OpenPyXL**: Lectura de archivos Excel
+### Estructura del repositorio
 
-### Organización del Código
-- **Separación de responsabilidades**: Cada módulo tiene una función específica
-- **Reutilización**: Componentes compartidos en el módulo core
-- **Mantenibilidad**: Estructura clara y documentada
-- **Escalabilidad**: Fácil adición de nuevos análisis y gráficos
+#### assets
 
-## 🛠️ Instalación
+En este directorio se encuentran las imagenes utilizadas en el storytelling, además de los logos institucionales de la Universidad Oberta de Catalunya y de EUROSTUDENT.
 
-1. **Clonar el repositorio**:
-   ```bash
-   git clone [tu-repo]
-   cd ProyectoFinal
-   ```
+#### data
 
-2. **Crear entorno virtual (recomendado)**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # En Windows: venv\Scripts\activate
-   ```
+En este repositorio se encuentran los excels utilizados para el storytelling, además de los excels sin procesar de cada una de las categorias que se evaluaron en la ronda 8 de la encuesta EUROSTUDENT.
 
-3. **Instalar dependencias**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+#### modules
 
-4. **Ejecutar la aplicación**:
-   ```bash
-   streamlit run storytelling.py
-   ```
+En este directorio se encuentran los modulos utilizados para el storytelling, cada modulo tiene su propia carpeta y dentro de cada carpeta se encuentran los archivos necesarios para el funcionamiento de cada modulo.
 
-5. **Abrir en el navegador**:
-   - La aplicación se abrirá automáticamente en `http://localhost:8501`
-   - Si no se abre automáticamente, copia la URL que aparece en la terminal
+#### storytelling.py
 
-## 📁 Estructura del Proyecto
+En este archivo se encuentra el storytelling principal, donde se importan los modulos y se crea la aplicación interactiva. He añadido algunso estilos css para mejorar la estética de la aplicación.
 
-```
-ProyectoFinal/
-├── storytelling.py              # Aplicación principal de Streamlit
-├── requirements.txt             # Dependencias del proyecto
-├── README.md                   # Documentación del proyecto
-├── .gitignore                  # Archivos a ignorar en Git
-│
-├── modules/                    # Módulos organizados por funcionalidad
-│   ├── __init__.py
-│   │
-│   ├── core/                   # Funcionalidades centrales
-│   │   ├── __init__.py
-│   │   ├── color_config.py     # Configuración de colores y estilos
-│   │   └── data_loaders.py     # Funciones de carga de datos
-│   │
-│   ├── charts/                 # Gráficos organizados por categoría
-│   │   ├── __init__.py
-│   │   ├── demographic_charts.py      # Gráficos demográficos
-│   │   ├── work_study_charts.py       # Gráficos trabajo-estudio
-│   │   ├── impact_charts.py           # Gráficos de impacto
-│   │   ├── perception_charts.py       # Gráficos de percepción
-│   │   └── geographic_charts.py       # Mapas y gráficos geográficos
-│   │
-│   └── analysis/               # Análisis específicos y especializados
-│       ├── __init__.py
-│       ├── storytelling_module.py     # Narrativa principal
-│       ├── sankey_analysis.py         # Análisis de flujo Sankey
-│       └── isotype_analysis.py        # Análisis isotype por edad
-│
-├── data/                       # Datos organizados por tipo
-│   ├── preprocessed_excels/           # Datos preprocessados principales
-│   ├── preprocessed_impact_by_job/    # Datos de impacto del trabajo
-│   ├── preprocessed_relationship_study_job/  # Datos relación trabajo-estudio
-│   ├── raw_excels_data/              # Datos originales sin procesar
-│   └── sankey_excels/                # Datos específicos para Sankey
-│
-└── assets/                     # Recursos multimedia
-    ├── images/                        # Imágenes del proyecto
-    └── logos/                         # Logos institucionales
+#### requirements.txt
+
+En este archivo se encuentran las dependencias necesarias para el funcionamiento de la aplicación.
+
+### Instalación
+
+Para instalar las dependencias necesarias para el funcionamiento de la aplicación, se puede utilizar el archivo requirements.txt.
+
+```bash
+pip install -r requirements.txt
 ```
 
-## 🎯 Funcionalidades Principales
+Seguidamente, se puede ejecutar la aplicación con el siguiente comando:
 
-### 1. **Panorama Europeo**
-- Comparación de necesidad de trabajar por país
-- España vs promedio europeo
-- Identificación de patrones regionales
+```bash
+streamlit run storytelling.py
+```
 
-### 2. **Análisis Demográfico**
-- Por género, edad, campo de estudio
-- Situación de convivencia y nivel socioeconómico
-- Mapas de calor interactivos
+### Bibliografía
 
-### 3. **Tipos de Trabajo**
-- Trabajo relacionado vs no relacionado con estudios
-- Análisis de la desconexión laboral-académica
+- EUROSTUDENT: https://www.eurostudent.eu/
+- Ronda 8 de la encuesta EUROSTUDENT: https://database.eurostudent.eu/drm/
 
-### 4. **Impacto en Bienestar**
-- Efectos en felicidad y rendimiento académico
-- Consideración de abandono de estudios
-- Correlaciones trabajo-bienestar
+### Créditos
 
-### 5. **Visualizaciones Especiales**
-- Diagrama Sankey de trayectorias estudiantiles
-- Gráficos isotype por edad
-- Mapas de costos europeos
+- Trabajo realizado por Daniel Felipe Gómez Aristizábal con fines académicos, 
+como parte de la asignatura Visualización de Datos del Máster Universitario en Ciencia de Datos de la UOC.
 
-## 📈 Datos
+### Licencia
 
-Los datos provienen del estudio **EUROSTUDENT Ronda 8**, que analiza las condiciones de vida y estudio de estudiantes de educación superior en Europa.
-
-- **25 países europeos** analizados
-- **9,072 estudiantes españoles** en la muestra
-- **8 dimensiones** de análisis principal
-
-## 📝 Autor
-
-**Daniel Felipe Gómez Aristizábal**  
-Máster Universitario en Ciencia de Datos - UOC  
-Asignatura: Visualización de Datos
-
-## 📄 Licencia
-
-Este proyecto tiene fines académicos y utiliza datos públicos del estudio EUROSTUDENT.
-
----
-
-## 🚀 Cómo Contribuir
-
-Si encuentras errores o tienes sugerencias:
-
-1. Abre un *issue* describiendo el problema
-2. Propón mejoras en las visualizaciones
-3. Comparte insights adicionales sobre los datos
-
-**¡La educación europea nos concierne a todos!** 🇪🇺 
+Este trabajo está bajo la licencia MIT.
